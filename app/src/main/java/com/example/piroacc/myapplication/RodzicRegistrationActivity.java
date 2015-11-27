@@ -1,0 +1,43 @@
+package com.example.piroacc.myapplication;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.example.piroacc.myapplication.rest.Register;
+
+public class RodzicRegistrationActivity extends AppCompatActivity {
+
+    public static final String logInfo = "registerButton";
+
+    public void registerButton(View v){
+        EditText imieUI =(EditText) findViewById(R.id.txtImie);
+        String name = imieUI.getText().toString();
+        Log.d(logInfo, "name : " + name);
+        EditText emailUI =(EditText) findViewById(R.id.txtEmail);
+        String email = emailUI.getText().toString();
+        Log.d(logInfo, "email : " + email);
+        EditText numerTelefonuUI =(EditText) findViewById(R.id.txtNumerTelefonu);
+        String numerTelefonu = numerTelefonuUI.getText().toString();
+        Log.d(logInfo, "email : " + numerTelefonu);
+        EditText hasloUI =(EditText) findViewById(R.id.txtHaslo);
+        String haslo = hasloUI.getText().toString();
+        Log.d(logInfo, "email : " + haslo);
+        Toast.makeText(getApplicationContext(), "Wysylam request", Toast.LENGTH_SHORT).show();
+        String[] userData = {name,email,numerTelefonu,haslo};
+        new Register().execute(userData);
+    }
+
+    Button b1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_rodzic_registration);
+        b1 = (Button) findViewById(R.id.btnRegister);
+    }
+}
