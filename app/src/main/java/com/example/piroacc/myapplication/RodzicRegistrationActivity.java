@@ -1,5 +1,6 @@
 package com.example.piroacc.myapplication;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,7 +30,14 @@ public class RodzicRegistrationActivity extends AppCompatActivity {
         Log.d(logInfo, "email : " + haslo);
         Toast.makeText(getApplicationContext(), "Wysylam request", Toast.LENGTH_SHORT).show();
         String[] userData = {name,email,numerTelefonu,haslo};
-        new Register().execute(userData);
+        new Register().execute(userData);   // dodac jakiegos boola ktory zostanie zwrocony z async taska
+        // if(asyncDone){goToParnetRegistrationPage}
+        goToParentReigstrationPage(v);
+    }
+
+    private void goToParentReigstrationPage(View v){
+        Intent i = new Intent(this,MapsActivity.class);
+        startActivity(i);
     }
 
     Button b1;
