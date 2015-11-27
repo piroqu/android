@@ -1,10 +1,11 @@
-package com.example.piroacc.myapplication.rest;
+package com.example.piroacc.myapplication.rest.parent;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.piroacc.myapplication.fetchers.objects.PokemonGson;
 import com.example.piroacc.myapplication.model.RodzicMDTO;
+import com.example.piroacc.myapplication.resources.Constant;
 import com.google.gson.Gson;
 
 
@@ -27,11 +28,11 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * Created by PiroACC on 2015-11-26.
  */
-public class Register extends AsyncTask<String, Void, String> {
+public class RodzicRegister extends AsyncTask<String, Void, String> {
 
     public Reader post(String rodzicAsString) throws IOException {
         URL url = null;
-        url = new URL("http://192.168.0.10:8080/praca/rest/parent/register");
+        url = new URL(Constant.HOST_ADDRES+"praca/rest/parent/register");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(10000);
         conn.setConnectTimeout(15000);
@@ -61,7 +62,7 @@ public class Register extends AsyncTask<String, Void, String> {
         rodzicMDTO.setNumerTelefonu("1234567890");
         Gson gson = new Gson();
         String rodzicMDTOString = gson.toJson(rodzicMDTO);
-        Log.d("Register", "GSON PARSER:" + rodzicMDTOString);
+        Log.d("RodzicRegister", "GSON PARSER:" + rodzicMDTOString);
         return rodzicMDTOString;
     }
 
@@ -76,7 +77,7 @@ public class Register extends AsyncTask<String, Void, String> {
         rodzicMDTO.setNumerTelefonu(numerTelefonu);
         Gson gson = new Gson();
         String rodzicMDTOString = gson.toJson(rodzicMDTO);
-        Log.d("Register", "GSON PARSER:" + rodzicMDTOString);
+        Log.d("RodzicRegister", "GSON PARSER:" + rodzicMDTOString);
         return rodzicMDTOString;
     }
 

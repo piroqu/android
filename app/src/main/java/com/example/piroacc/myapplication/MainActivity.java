@@ -9,10 +9,6 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.piroacc.myapplication.fetchers.DataFetcher;
-import com.example.piroacc.myapplication.fetchers.GsonParser;
-import com.example.piroacc.myapplication.rest.Register;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override

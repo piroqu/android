@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.piroacc.myapplication.rest.Register;
+import com.example.piroacc.myapplication.rest.parent.RodzicRegister;
 
 public class RodzicRegistrationActivity extends AppCompatActivity {
 
@@ -30,7 +30,7 @@ public class RodzicRegistrationActivity extends AppCompatActivity {
         Log.d(logInfo, "email : " + haslo);
         Toast.makeText(getApplicationContext(), "Wysylam request", Toast.LENGTH_SHORT).show();
         String[] userData = {name,email,numerTelefonu,haslo};
-        new Register().execute(userData);   // dodac jakiegos boola ktory zostanie zwrocony z async taska
+        new RodzicRegister().execute(userData);   // dodac jakiegos boola ktory zostanie zwrocony z async taska
         // if(asyncDone){goToParnetRegistrationPage}
         goToParentReigstrationPage(v);
     }

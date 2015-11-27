@@ -13,13 +13,21 @@ public class FirstScreenActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void goToChildRegistrationPage(View v){
+        Intent i = new Intent(this,DzieckoRegistrationActivity.class);
+        startActivity(i);
+    }
+
     Button parentRegistration;
+    Button dzieckoRegistration;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_screen);
         parentRegistration = (Button) findViewById(R.id.btnRodzic);
+        dzieckoRegistration = (Button) findViewById(R.id.btnDziecko);
 
     }
 }
