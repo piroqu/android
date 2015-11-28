@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class DzieckoMDTOR implements java.io.Serializable {
 
-    @SerializedName("id")
+//    @SerializedName("id")
     private Integer dzieckoId;
 
     public Integer getDzieckoId() {

@@ -4,11 +4,16 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.piroacc.myapplication.helper.DateParser;
+import com.example.piroacc.myapplication.model.Dziecko;
 import com.example.piroacc.myapplication.model.dto.request.DzieckoMDTO;
 import com.example.piroacc.myapplication.model.dto.response.DzieckoMDTOR;
 import com.example.piroacc.myapplication.resources.Constant;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,6 +30,10 @@ import java.net.URL;
  * Created by PiroACC on 2015-11-27.
  */
 public class DzieckoRegister extends AsyncTask<String, Void, DzieckoMDTOR> {
+
+    private static final String REGISTER = "praca/rest/child/register";
+
+    private static final String LOG_CHILD_REGISTER = "CHILD REGISTER: ";
 
     public DzieckoMDTOR post(String dzieckoAsString) throws IOException {
         URL url = null;
@@ -43,19 +52,36 @@ public class DzieckoRegister extends AsyncTask<String, Void, DzieckoMDTOR> {
         writer.flush();
         writer.close();
         os.close();
-        if(checkResponseMessage(conn.getResponseMessage()));{
+        if (checkResponseMessage(conn.getResponseMessage())) ;
+        {
             InputStream in = conn.getInputStream();
             JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
             Gson gson = new Gson();
-            dzieckoMDTOR = gson.fromJson(reader, DzieckoMDTOR.class) ;
-            Log.d ("Dziecko register: :" ,dzieckoMDTOR.toString());
+            dzieckoMDTOR = gson.fromJson(reader, DzieckoMDTOR.class);
+            Log.d("Dziecko register: :", dzieckoMDTOR.toString());
         }
         return dzieckoMDTOR;
     }
 
-    private boolean checkResponseMessage(String response){
-        Log.d("Dziecko register: :", response );
-        if(response.equals("OK")) return true;
+    public DzieckoMDTOR postByRestTemplate(DzieckoMDTO dzieckoMDTO) {
+// The connection URL
+        String url = Constant.HOST_ADDRES + REGISTER;
+// Create a new RestTemplate instance
+        RestTemplate restTemplate = new RestTemplate();
+// Add the String message converter
+//        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+// Make the HTTP GET request, marshaling the response to a String
+        Log.d(LOG_CHILD_REGISTER, "SENDS : " + dzieckoMDTO);
+        DzieckoMDTOR response = restTemplate.postForObject(url, dzieckoMDTO, DzieckoMDTOR.class);
+        Log.d(LOG_CHILD_REGISTER, "RESULT : " + response);
+        return response;
+    }
+
+
+    private boolean checkResponseMessage(String response) {
+        Log.d("Dziecko register: :", response);
+        if (response.equals("OK")) return true;
         else return false;
     }
 
@@ -71,15 +97,32 @@ public class DzieckoRegister extends AsyncTask<String, Void, DzieckoMDTOR> {
         return dzieckoMDTOasString;
     }
 
+    public DzieckoMDTO createDziecko(String imie, String haslo) {
+        DzieckoMDTO dzieckoMDTO = new DzieckoMDTO();
+        dzieckoMDTO.setDataUtworzenia(DateParser.getCurrentParsedDateAsString());
+        dzieckoMDTO.setImie(imie);
+        dzieckoMDTO.setStatus(true);
+        dzieckoMDTO.setHaslo(haslo);
+//        Gson gson = new Gson();
+        Log.d("DzieckoRegister", "CREATED DzieckoMDTO : " + dzieckoMDTO);
+        return dzieckoMDTO;
+    }
+
     @Override
     protected DzieckoMDTOR doInBackground(String... params) {
-        String dzieckoMDTOAsString = createDzieckoMDTO(params[0],params[1]);
+        DzieckoMDTO dzieckoMDTO = createDziecko(params[0],params[1]);
+        return postByRestTemplate(dzieckoMDTO);
+    }
+
+ /*   @Override
+    protected DzieckoMDTOR doInBackground(String... params) {
+        String dzieckoMDTOAsString = createDzieckoMDTO(params[0], params[1]);
         try {
-            DzieckoMDTOR response =post(dzieckoMDTOAsString);
+            DzieckoMDTOR response = post(dzieckoMDTOAsString);
             return response;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
 }

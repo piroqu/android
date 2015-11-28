@@ -16,12 +16,14 @@ import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
+import com.example.piroacc.myapplication.rest.child.SynchronizeDataPositions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DzieckoLocationActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
@@ -109,6 +111,9 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
     public void synchronize(View view){
         Log.d("SYNC", "SYNC PRESSED");
         List<Pozycja> positionsToSync = DatabaseHelper.getInstance(this).getPositionsToSync();
+        Pozycja[] stockArr = new Pozycja[positionsToSync.size()];
+        stockArr = positionsToSync.toArray(stockArr);
+        new SynchronizeDataPositions().execute(stockArr);
     }
 
     /**

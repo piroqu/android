@@ -9,6 +9,8 @@ import android.widget.Button;
 
 import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.model.Uzytkownik;
+import com.example.piroacc.myapplication.rest.Test;
+import com.example.piroacc.myapplication.rest.child.DzieckoRegister;
 
 import java.util.List;
 
@@ -22,6 +24,10 @@ public class FirstScreenActivity extends AppCompatActivity {
     public void goToChildRegistrationPage(View v){
         Intent i = new Intent(this,DzieckoRegistrationActivity.class);
         startActivity(i);
+    }
+
+    public void testRest(View view){
+        new Test().execute();
     }
 
     Button parentRegistration;
