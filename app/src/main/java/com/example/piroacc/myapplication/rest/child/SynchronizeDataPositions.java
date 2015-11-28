@@ -3,11 +3,17 @@ package com.example.piroacc.myapplication.rest.child;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.piroacc.myapplication.PozycjaList;
 import com.example.piroacc.myapplication.model.Pozycja;
+import com.example.piroacc.myapplication.model.dto.response.DzieckoMDTOResponse;
 import com.example.piroacc.myapplication.resources.Constant;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -19,6 +25,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,6 +36,25 @@ public class SynchronizeDataPositions extends AsyncTask <Pozycja, Void, Void>{
     private final static String SYNCHRONIZE_DATA_POSITION = "praca/rest/child/synchronize/";
 
     private static final String LOG_SYNCHRONIZE = "Synchronize data";
+
+    public List<Pozycja> postByRestTemplate(Pozycja [] positions){
+        // The connection URL
+        String tempUserId = "1";
+        String url = Constant.HOST_ADDRES + SYNCHRONIZE_DATA_POSITION +tempUserId;
+// Create a new RestTemplate instance
+        RestTemplate restTemplate = new RestTemplate();
+// Add the String message converter
+//        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+// Make the HTTP GET request, marshaling the response to a String
+        Log.d(LOG_SYNCHRONIZE, "SENDS : " + positions);
+        ResponseEntity<Pozycja[]> response = restTemplate.postForEntity(url, positions, Pozycja[].class);
+        List<Pozycja> responseAsList = Arrays.asList(response.getBody());
+        for(Pozycja tmp : responseAsList){
+            Log.d(LOG_SYNCHRONIZE, "RESULT : " +tmp.toString() );
+        }
+        return null;
+    }
 
     public void post(Pozycja[] positions) throws IOException {
         Log.d(LOG_SYNCHRONIZE, "in POST");
@@ -58,16 +84,11 @@ public class SynchronizeDataPositions extends AsyncTask <Pozycja, Void, Void>{
         }.getType();
         List<Pozycja> response  = gson.fromJson(reader, listType) ;
         Log.d(LOG_SYNCHRONIZE, "REPONSE BODY:" + response.toString());
-
     }
 
     @Override
     protected Void doInBackground(Pozycja... params) {
-        try {
-            post(params);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        postByRestTemplate(params);
         return null;
     }
 }
