@@ -1,4 +1,4 @@
-package com.example.piroacc.myapplication.model;
+package com.example.piroacc.myapplication.model.dto;
 
 import java.io.Serializable;
 import java.util.HashSet;

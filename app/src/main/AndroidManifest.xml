@@ -25,9 +25,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".DzieckoLocationActivity"
+            android:name=".FirstScreenActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -69,8 +70,8 @@
         </activity>
         <activity android:name=".DzieckoMainActivity" >
 
-<!--        </activity>
-        <activity android:name=".DzieckoLocationActivity" >-->
+        </activity>
+        <activity android:name=".DzieckoLocationActivity" >
         </activity>
 
     </application>

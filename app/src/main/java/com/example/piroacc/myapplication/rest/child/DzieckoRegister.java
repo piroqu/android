@@ -4,8 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.piroacc.myapplication.helper.DateParser;
-import com.example.piroacc.myapplication.model.DzieckoMDTO;
-import com.example.piroacc.myapplication.model.RodzicMDTO;
+import com.example.piroacc.myapplication.model.dto.DzieckoMDTO;
 import com.example.piroacc.myapplication.resources.Constant;
 import com.google.gson.Gson;
 

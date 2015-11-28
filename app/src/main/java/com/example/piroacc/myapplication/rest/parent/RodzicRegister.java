@@ -3,8 +3,7 @@ package com.example.piroacc.myapplication.rest.parent;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.piroacc.myapplication.fetchers.objects.PokemonGson;
-import com.example.piroacc.myapplication.model.RodzicMDTO;
+import com.example.piroacc.myapplication.model.dto.RodzicMDTO;
 import com.example.piroacc.myapplication.resources.Constant;
 import com.google.gson.Gson;
 
@@ -18,12 +17,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Calendar;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by PiroACC on 2015-11-26.
