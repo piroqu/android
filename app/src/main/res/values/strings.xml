@@ -17,4 +17,8 @@
         completions."
     </string>
     <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_test_locator">TestLocator</string>
+
+
+
 </resources>

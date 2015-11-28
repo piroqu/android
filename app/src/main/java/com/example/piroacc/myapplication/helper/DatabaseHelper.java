@@ -1,4 +1,4 @@
-package com.example.piroacc.myapplication.database;
+package com.example.piroacc.myapplication.helper;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.piroacc.myapplication.model.Dziecko;
+import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 
 import java.util.ArrayList;
@@ -17,10 +17,10 @@ import java.util.List;
  * Created by PiroACC on 2015-11-27.
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
     private static final String DEBUG_LOG = "SQL CREATOR : ";
-    private static final String DATABASE_NAME = "USER_DATABASE",
+    public static final String DATABASE_NAME = "USER_DATABASE",
 
     TABLE_USER = "telefon_uzytkownik ",
             KEY_ID = "telefon_uzytkownik_id",
@@ -44,7 +44,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             FK_CHILD = "telefon_dziecko_telefon_dziecko_id";
 
 
-    private static final String CREATE_UZYTKOWNIK = "CREATE TABLE " + TABLE_USER + " (" +
+    public static final String CREATE_UZYTKOWNIK = "CREATE TABLE " + TABLE_USER + " (" +
             KEY_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
             KEY_CREATION_DATE + " timestamp , " +
             KEY_PASSWORD + " varchar(255) NOT NULL, " +
@@ -52,14 +52,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             KEY_EMAIL + " varchar(255), " +
             KEY_PHONE_NUMER + " varchar(255), " +
             KEY_IS_RODZIC + " integer(1));";
-    private static final String CREATE_TELEFON_DZIECKO = "CREATE TABLE " + TABLE_CHILD + " (" +
+    public static final String CREATE_TELEFON_DZIECKO = "CREATE TABLE " + TABLE_CHILD + " (" +
             KEY_CHILD_KEY_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-            KEY_CHILD_NAME + "varchar(255) NOT NULL);";
+            KEY_CHILD_NAME + " varchar(255) NOT NULL);";
     public static final String CREATE_TELEFON_POZYCJA = "CREATE TABLE "+ TABLE_CHILD_POSITION+ " ("+
-            KEY_CHILD_POSITION_ID +" INTEGER NOT NULL PRIMARY KEY, " +
+            KEY_CHILD_POSITION_ID +" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
             KEY_LONGITUDE  +" double(10) NOT NULL, " +
             KEY_LATITUDE   +" double(10) NOT NULL, " +
-            KEY_POSITION_TIMESTAMP+" timestamp NOT NULL, " +
+            KEY_POSITION_TIMESTAMP+" varchar(255) , " +
             KEY_IS_SYNCHRONIZED + " integer(1) NOT NULL, " +
             FK_CHILD +" integer(10) NOT NULL, " +
             "  FOREIGN KEY("+FK_CHILD+") REFERENCES "+TABLE_CHILD+"("+KEY_CHILD_KEY_ID+"));";
@@ -67,6 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DROP_USER = "DROP TABLE IF EXISTS telefon_uzytkownik;";
     private static final String DROP_CHILD = "DROP TABLE IF EXISTS telefon_dziecko;";
     private static final String DROP_CHILD_POSITION = "DROP TABLE IF EXISTS telefon_pozycja;";
+
 
 
     public DatabaseHelper(Context context) {
@@ -88,7 +89,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.w(DatabaseHelper.class.getName(),
+                "Upgrading database from version " + oldVersion + " to "
+                        + newVersion + ", which will destroy all old data");
+        db.execSQL(DROP_USER);
+        db.execSQL(DROP_CHILD_POSITION);
+        db.execSQL(DROP_CHILD);
+        onCreate(db);
+    }
 
+
+    public void insertPozycja(Pozycja position){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues wartosci = new ContentValues();
+        wartosci.put(KEY_LONGITUDE, position.getDlugoscGeograficzna());
+        wartosci.put(KEY_LATITUDE, position.getSzerokoscGeograficzna());
+        wartosci.put(KEY_POSITION_TIMESTAMP, position.getData());
+        wartosci.put(KEY_IS_SYNCHRONIZED, position.isCzyZsynchronizowano());
+        wartosci.put(FK_CHILD, position.getFkDzieckoId());
+
+        db.insertOrThrow(TABLE_CHILD_POSITION, null, wartosci);
     }
 
     public void insertUzytkownik(Uzytkownik user) {
@@ -110,5 +130,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             users.add(tempUser);
         }
         return users;
+    }
+
+    public List<Pozycja> getPositions(){
+        String[] positionColumns = {KEY_CHILD_POSITION_ID,KEY_LONGITUDE,KEY_LATITUDE,KEY_POSITION_TIMESTAMP,KEY_IS_SYNCHRONIZED,FK_CHILD};
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_CHILD_POSITION, positionColumns, null, null, null, null, null);
+        List<Pozycja> positions = new ArrayList();
+        while(cursor.moveToNext()){
+            Pozycja tempPosition = new Pozycja();
+            tempPosition.setId(cursor.getInt(0));
+            tempPosition.setDlugoscGeograficzna(cursor.getDouble(1));
+            tempPosition.setSzerokoscGeograficzna(cursor.getDouble(2));
+            tempPosition.setData(cursor.getString(3));
+            boolean value =cursor.getInt(4) >0 ;
+            tempPosition.setCzyZsynchronizowano(value);
+            tempPosition.setFkDzieckoId(cursor.getInt(5));
+            positions.add(tempPosition);
+        }
+        return positions;
     }
 }

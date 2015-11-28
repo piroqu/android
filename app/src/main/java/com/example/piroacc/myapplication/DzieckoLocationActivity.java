@@ -12,14 +12,19 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.piroacc.myapplication.helper.DatabaseHelper;
+import com.example.piroacc.myapplication.helper.DateParser;
+import com.example.piroacc.myapplication.model.Pozycja;
+import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-public class DzieckoLocationActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+import java.util.List;
+
+public class DzieckoLocationActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     // LogCat tag
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -37,14 +42,16 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
     private LocationRequest mLocationRequest;
 
     // Location updates intervals in sec
-    private static int UPDATE_INTERVAL = 10000; // 10 sec
-    private static int FATEST_INTERVAL = 5000; // 5 sec
-    private static int DISPLACEMENT = 10; // 10 meters
+    private static int UPDATE_INTERVAL = 5000; // 5 sec
+    private static int FATEST_INTERVAL = 2000; // 2 sec
+    private static int DISPLACEMENT = 2; // 2 meters
 
     private TextView txtProvider;
     private TextView txtLat;
     private TextView txtLong;
     private Button btnRefresh;
+
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +61,48 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         txtLat = (TextView) findViewById(R.id.txtLatitude);
         txtLong = (TextView) findViewById(R.id.txtLongitude);
         btnRefresh = (Button) findViewById(R.id.btnRefresh);
+        db=new DatabaseHelper(this);
+               Log.d("DATABASE CREATOR", "z FirstScreenActivity");
+        Log.d("DATABASE CREATOR", "CREATED");
+
+        Uzytkownik user = new Uzytkownik();
+        user.setEmail("werwe@qwee.pl");
+        user.setImie("Imje");
+        user.setHaslo("123chusd");
+        Log.d("DATABASE CREATOR", "USER BEFORE");
+        db.insertUzytkownik(user);
+        Log.d("DATABASE CREATOR", "USER INSERTED!");
+        List<Uzytkownik> users = db.getUsers();
+        Log.d("DATABASE SIZE : " , String.valueOf(users.size()));
         // First we need to check availability of play services
         if (checkPlayServices()) {
+            // Building the GoogleApi client
             buildGoogleApiClient();
+            createLocationRequest();
         }
-        displayLocation();
     }
 
-    public void refreshLocation(View view) {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Resuming the periodic location updates
+        if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+            startLocationUpdates();
+        }
+    }
+
+    public void refresh(View view) {
+        Log.d("REFRESH", "REFRESH PRESSED");
         displayLocation();
+        startLocationUpdates();
     }
 
     /**
@@ -75,16 +115,14 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         if (mLastLocation != null) {
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
-            Log.d("LOCATION", "lat: " + latitude);
-            Log.d("LOCATION", "long: " + longitude);
 
-            txtLong.setText("" + longitude);
+            Log.d("Localization:", "LAT: " + latitude);
+            Log.d("Localization:", "LONG: " + longitude);
             txtLat.setText("" + latitude);
-            txtProvider
-                    .setText("Located!");
+            txtLong.setText("" + longitude);
         } else {
-            txtProvider
-                    .setText("Not able to locate");
+            txtLat.setText("FAILED");
+            txtLong.setText("FAILED");
         }
     }
 
@@ -119,29 +157,13 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         return true;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Resuming the periodic location updates
-        if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
-            startLocationUpdates();
-        }    }
-
     /**
      * Method to toggle periodic location updates
      */
     private void togglePeriodicLocationUpdates() {
         if (!mRequestingLocationUpdates) {
             // Changing the button text
+
             mRequestingLocationUpdates = true;
 
             // Starting the location updates
@@ -151,6 +173,7 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
 
         } else {
             // Changing the button text
+
             mRequestingLocationUpdates = false;
 
             // Stopping the location updates
@@ -164,20 +187,17 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
      * Starting the location updates
      */
     protected void startLocationUpdates() {
-
         LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this);
+                mGoogleApiClient, mLocationRequest, this);
 
     }
-
     /**
      * Stopping location updates
      */
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, (com.google.android.gms.location.LocationListener) this);
+                mGoogleApiClient, this);
     }
-
     /**
      * Creating location request object
      */
@@ -186,22 +206,19 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FATEST_INTERVAL);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setSmallestDisplacement(DISPLACEMENT); // 10 meters
+       // mLocationRequest.setSmallestDisplacement(DISPLACEMENT); // 10 meters
     }
 
-    /**
-     * Google api callback methods
-     */
+
+
     @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
-                + result.getErrorCode());
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
     }
 
     @Override
-    public void onConnected(Bundle arg0) {
-
-        // Once connected with google api, get the location
+    public void onConnected(Bundle bundle) {
         displayLocation();
         if (mRequestingLocationUpdates) {
             startLocationUpdates();
@@ -209,8 +226,14 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
     }
 
     @Override
-    public void onConnectionSuspended(int arg0) {
+    public void onConnectionSuspended(int i) {
         mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
+                + connectionResult.getErrorCode());
     }
 
     @Override
@@ -218,26 +241,31 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         // Assign the new location
         mLastLocation = location;
 
+        Log.d("LOCATION", " CHANGED ");
         Toast.makeText(getApplicationContext(), "Location changed!",
                 Toast.LENGTH_SHORT).show();
+        Log.d("LOCATION", " INSERT TO DATABASE ");
+        Log.d("LOCATION", "POZYCJE przed insert : " + db.getPositions());
+        insertPozycja(location.getLongitude(), location.getLatitude());
+        Log.d("LOCATION", "POZYCJE po insert: " + db.getPositions());
 
         // Displaying the new location on UI
         displayLocation();
-
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
+    private void insertPozycja(double longitude,double latitude){
+        DatabaseHelper db = new DatabaseHelper(this);
+        db.insertPozycja(createPozycja(longitude,latitude));
     }
 
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
+    private Pozycja createPozycja(double longitude, double latitude){
+        Pozycja position= new Pozycja();
+        position.setCzyZsynchronizowano(false);
+        position.setData(DateParser.getCurrentParsedDateAsString());
+        position.setDlugoscGeograficzna(longitude);
+        position.setSzerokoscGeograficzna(latitude);
+//        position.setFkDzieckoId(); dodac obecnego usera
+        position.setFkDzieckoId(1);
+        return position;
     }
 }
