@@ -1,6 +1,7 @@
 package com.example.piroacc.myapplication;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.widget.Button;
 
 import com.example.piroacc.myapplication.database.DatabaseHelper;
 import com.example.piroacc.myapplication.model.Uzytkownik;
+
+import java.util.List;
 
 public class FirstScreenActivity extends AppCompatActivity {
 
@@ -33,7 +36,7 @@ public class FirstScreenActivity extends AppCompatActivity {
         parentRegistration = (Button) findViewById(R.id.btnRodzic);
         dzieckoRegistration = (Button) findViewById(R.id.btnDziecko);
 
-        Log.d("DATABASE CREATOR", "z FirstScreenActivity");
+ /*       Log.d("DATABASE CREATOR", "z FirstScreenActivity");
         DatabaseHelper db = new DatabaseHelper(this);
         Log.d("DATABASE CREATOR", "CREATED");
 
@@ -44,6 +47,11 @@ public class FirstScreenActivity extends AppCompatActivity {
         Log.d("DATABASE CREATOR", "USER BEFORE");
         db.insertUzytkownik(user);
         Log.d("DATABASE CREATOR", "USER INSERTED!");
-
+        List<Uzytkownik> users = db.getUsers();
+        Log.d("DATABASE SIZE : " , String.valueOf(users.size()));
+        for(Uzytkownik tempUser: users){
+            Log.d("USER", tempUser.getImie());
+        }
+*/
     }
 }
