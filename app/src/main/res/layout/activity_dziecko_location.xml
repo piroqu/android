@@ -70,7 +70,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Odswiez"
+        android:text="WLACZ"
         android:id="@+id/btnRefresh"
         android:layout_below="@+id/textView10"
         android:layout_alignParentLeft="true"
@@ -79,4 +79,17 @@
         android:layout_alignRight="@+id/txtLatitude"
         android:layout_alignEnd="@+id/txtLatitude"
         android:onClick="refresh"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Synchronizuj"
+        android:id="@+id/btnSynchronize"
+        android:layout_below="@+id/btnRefresh"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="79dp"
+        android:layout_alignRight="@+id/btnRefresh"
+        android:layout_alignEnd="@+id/btnRefresh"
+        android:onClick="synchronize"/>
 </RelativeLayout>

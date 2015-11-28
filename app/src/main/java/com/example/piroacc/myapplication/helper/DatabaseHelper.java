@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.piroacc.myapplication.model.Dziecko;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 
@@ -20,6 +21,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int VERSION = 2;
 
     private static final String DEBUG_LOG = "SQL CREATOR : ";
+    private static final String DEBUG_LOG_INSERT = "SQL INSERT : ";
+    private static final String DEBUG_LOG_SELECT = "SQL SELECT : ";
+
     public static final String DATABASE_NAME = "USER_DATABASE",
 
     TABLE_USER = "telefon_uzytkownik ",
@@ -107,6 +111,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void insertDziecko(Dziecko dziecko){
+        Log.d(DEBUG_LOG_INSERT, dziecko + "to : " + TABLE_CHILD);
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues wartosci = new ContentValues();
+        wartosci.put(KEY_CHILD_KEY_ID, dziecko.getId());
+        wartosci.put(KEY_CHILD_NAME, dziecko.getImie());
+        db.insertOrThrow(TABLE_CHILD, null, wartosci);
+        Log.d(DEBUG_LOG_INSERT, dziecko + "to : " + TABLE_CHILD + "OK!");
+    }
 
     public void insertPozycja(Pozycja position){
         SQLiteDatabase db = getWritableDatabase();
@@ -158,5 +171,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             positions.add(tempPosition);
         }
         return positions;
+    }
+
+    public List<Pozycja> getPositionsToSync(){
+        Log.d(DEBUG_LOG_SELECT, "select positions to sync");
+        String[] positionColumns = {KEY_CHILD_POSITION_ID,KEY_LONGITUDE,KEY_LATITUDE,KEY_POSITION_TIMESTAMP,KEY_IS_SYNCHRONIZED,FK_CHILD};
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_CHILD_POSITION, positionColumns, KEY_IS_SYNCHRONIZED+"=?", new String[]{"0"}, null, null, null);
+        List<Pozycja> positions = new ArrayList();
+        while(cursor.moveToNext()){
+            Pozycja tempPosition = new Pozycja();
+            tempPosition.setId(cursor.getInt(0));
+            tempPosition.setDlugoscGeograficzna(cursor.getDouble(1));
+            tempPosition.setSzerokoscGeograficzna(cursor.getDouble(2));
+            tempPosition.setData(cursor.getString(3));
+            boolean value =cursor.getInt(4) >0 ;
+            tempPosition.setCzyZsynchronizowano(value);
+            tempPosition.setFkDzieckoId(cursor.getInt(5));
+            positions.add(tempPosition);
+        }
+        Log.d(DEBUG_LOG_SELECT, "select positions to sync :"+ positions.size());
+        return positions;
+    }
+
+    public Integer getCurrentChildId(){
+        Log.d(DEBUG_LOG_SELECT, "select current child id");
+        String[] childColumns = {KEY_CHILD_KEY_ID, KEY_CHILD_NAME };
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_CHILD, childColumns, null, null, null, null, null);
+        cursor.moveToNext();
+        Integer chilId= cursor.getInt(1);
+        Log.d(DEBUG_LOG_SELECT, "select current child id :" +chilId);
+        return chilId;
     }
 }

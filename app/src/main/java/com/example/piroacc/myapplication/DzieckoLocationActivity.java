@@ -50,6 +50,7 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
     private TextView txtLat;
     private TextView txtLong;
     private Button btnRefresh;
+    private Button btnSynchronzie;
 
     private DatabaseHelper db;
 
@@ -61,6 +62,7 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         txtLat = (TextView) findViewById(R.id.txtLatitude);
         txtLong = (TextView) findViewById(R.id.txtLongitude);
         btnRefresh = (Button) findViewById(R.id.btnRefresh);
+        btnSynchronzie= (Button) findViewById(R.id.btnSynchronize);
         db=new DatabaseHelper(this);
                Log.d("DATABASE CREATOR", "z FirstScreenActivity");
         Log.d("DATABASE CREATOR", "CREATED");
@@ -103,6 +105,10 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         Log.d("REFRESH", "REFRESH PRESSED");
         displayLocation();
         startLocationUpdates();
+    }
+    public void synchronize(View view){
+        Log.d("SYNC", "SYNC PRESSED");
+        List<Pozycja> positionsToSync = DatabaseHelper.getInstance(this).getPositionsToSync();
     }
 
     /**
@@ -255,7 +261,7 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
 
     private void insertPozycja(double longitude,double latitude){
         DatabaseHelper db = new DatabaseHelper(this);
-        db.insertPozycja(createPozycja(longitude,latitude));
+        db.insertPozycja(createPozycja(longitude, latitude));
     }
 
     private Pozycja createPozycja(double longitude, double latitude){
@@ -264,7 +270,7 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         position.setData(DateParser.getCurrentParsedDateAsString());
         position.setDlugoscGeograficzna(longitude);
         position.setSzerokoscGeograficzna(latitude);
-//        position.setFkDzieckoId(); dodac obecnego usera
+        position.setFkDzieckoId(DatabaseHelper.getInstance(this).getCurrentChildId());
         position.setFkDzieckoId(1);
         return position;
     }

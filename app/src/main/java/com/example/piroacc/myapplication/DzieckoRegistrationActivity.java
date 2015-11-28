@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.piroacc.myapplication.helper.DatabaseHelper;
+import com.example.piroacc.myapplication.model.Dziecko;
 import com.example.piroacc.myapplication.model.dto.response.DzieckoMDTOR;
 import com.example.piroacc.myapplication.rest.child.DzieckoRegister;
 
@@ -37,7 +39,9 @@ public class DzieckoRegistrationActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         if (responseBody!= null){
-            gotToChildParentActivity(v);
+            Dziecko dziecko = new Dziecko(responseBody.getDzieckoId(),name);
+            DatabaseHelper.getInstance(this).insertDziecko(dziecko);
+            goToLocationChildActivity(v);
         }
         else {
             Toast.makeText(getApplicationContext(),
@@ -54,8 +58,8 @@ public class DzieckoRegistrationActivity extends AppCompatActivity {
         b1= (Button) findViewById(R.id.btnRegister);
     }
 
-    private void gotToChildParentActivity(View v){
-        Intent i = new Intent(this,DzieckoMainActivity.class);
+    private void goToLocationChildActivity(View v){
+        Intent i = new Intent(this,DzieckoLocationActivity.class);
         startActivity(i);
     }
 }
