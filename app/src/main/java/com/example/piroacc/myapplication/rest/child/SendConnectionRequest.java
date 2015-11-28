@@ -3,7 +3,7 @@ package com.example.piroacc.myapplication.rest.child;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.piroacc.myapplication.model.dto.RodzicDzieckoMDTO;
+import com.example.piroacc.myapplication.model.dto.request.RodzicDzieckoMDTO;
 import com.example.piroacc.myapplication.resources.Constant;
 import com.google.gson.Gson;
 

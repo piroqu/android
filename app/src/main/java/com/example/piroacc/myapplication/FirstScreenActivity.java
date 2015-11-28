@@ -26,7 +26,6 @@ public class FirstScreenActivity extends AppCompatActivity {
 
     Button parentRegistration;
     Button dzieckoRegistration;
-    private DatabaseHelper db;
 
 
     @Override
@@ -35,8 +34,7 @@ public class FirstScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_first_screen);
         parentRegistration = (Button) findViewById(R.id.btnRodzic);
         dzieckoRegistration = (Button) findViewById(R.id.btnDziecko);
-        db = new DatabaseHelper(this);
-        List<Uzytkownik> users = db.getUsers();
+        List<Uzytkownik> users = DatabaseHelper.getInstance(this).getUsers();
         Log.d("DATABASE SIZE : ", String.valueOf(users.size()));
  /*       Log.d("DATABASE CREATOR", "z FirstScreenActivity");
         DatabaseHelper db = new DatabaseHelper(this);

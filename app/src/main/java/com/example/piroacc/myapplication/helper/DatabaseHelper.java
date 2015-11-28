@@ -74,6 +74,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, VERSION);
     }
 
+    public static DatabaseHelper instance;
+
+    public static DatabaseHelper getInstance(Context context){
+        if (instance==null){
+            return new DatabaseHelper(context);
+        }
+        else return instance;
+    }
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {

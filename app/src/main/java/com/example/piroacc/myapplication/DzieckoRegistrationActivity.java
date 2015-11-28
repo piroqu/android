@@ -9,7 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.piroacc.myapplication.model.dto.response.DzieckoMDTOR;
 import com.example.piroacc.myapplication.rest.child.DzieckoRegister;
+
+import java.util.concurrent.ExecutionException;
 
 public class DzieckoRegistrationActivity extends AppCompatActivity {
 
@@ -25,9 +28,22 @@ public class DzieckoRegistrationActivity extends AppCompatActivity {
         Log.d(logInfo, "email : " + email);
         Toast.makeText(getApplicationContext(), "Wysylam request", Toast.LENGTH_SHORT).show();
         String[] userData = {name,email};
-        new DzieckoRegister().execute(userData);   // dodac jakiegos boola ktory zostanie zwrocony z async taska
-        // if(asyncDone){goToParnetRegistrationPage}
-        gotToChildParentActivity(v);
+        DzieckoMDTOR responseBody = null;
+        try {
+            responseBody = new DzieckoRegister().execute(userData).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        if (responseBody!= null){
+            gotToChildParentActivity(v);
+        }
+        else {
+            Toast.makeText(getApplicationContext(),
+                    "Ops ! Cos nie dziala, serwer? Aplikacja? - nie wyslalem requesta !", Toast.LENGTH_LONG)
+                    .show();
+        }
     }
 
     Button b1;
