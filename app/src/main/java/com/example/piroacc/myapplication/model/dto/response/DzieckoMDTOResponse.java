@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by PiroACC on 2015-11-27.
  */
-public class DzieckoMDTOR implements java.io.Serializable {
+public class DzieckoMDTOResponse implements java.io.Serializable {
 
 //    @SerializedName("id")
     private Integer dzieckoId;
@@ -20,7 +20,7 @@ public class DzieckoMDTOR implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "DzieckoMDTOR{" +
+        return "DzieckoMDTOResponse{" +
                 "dzieckoId=" + dzieckoId +
                 '}';
     }

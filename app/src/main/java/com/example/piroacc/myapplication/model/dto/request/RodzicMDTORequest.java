@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RodzicMDTO implements java.io.Serializable {
+public class RodzicMDTORequest implements java.io.Serializable {
 
     private Integer rodzicId;
     private String dataUtworzenia;
@@ -72,11 +72,11 @@ public class RodzicMDTO implements java.io.Serializable {
         return numerTelefonu;
     }
 
-    public RodzicMDTO() {
+    public RodzicMDTORequest() {
 
     }
 
-    public RodzicMDTO(String dataUtworzenia , String imie, String haslo, boolean status, String email, String numerTelefonu) {
+    public RodzicMDTORequest(String dataUtworzenia, String imie, String haslo, boolean status, String email, String numerTelefonu) {
         this.dataUtworzenia = dataUtworzenia;
         this.imie = imie;
         this.haslo = haslo;
