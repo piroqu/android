@@ -11,20 +11,32 @@ import java.util.Date;
  */
 public class DateParser {
 
+    private static final String DATE_FROMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     public static String getCurrentParsedDateAsString() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FROMAT);
         Date date = new Date();
         Calendar cal = Calendar.getInstance();
         return (dateFormat.format(cal.getTime()));
     }
 
     public static Date getCurrentParsedDate() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FROMAT);
         Calendar cal = Calendar.getInstance();
         Date date = new Date();
         try {
             date = dateFormat.parse(dateFormat.format(cal.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    public static Date parseStringToDate(String dateAsString){
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FROMAT);
+        Date date = new Date();
+        try {
+            date = dateFormat.parse(dateAsString);
         } catch (ParseException e) {
             e.printStackTrace();
         }

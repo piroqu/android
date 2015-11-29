@@ -25,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".LoginActivity"
+            android:name=".ChooseRoleActivity"
             android:label="@string/title_activity_login" >
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
@@ -70,8 +70,7 @@
         <activity android:name=".DzieckoMainActivity" >
         </activity>
         <activity android:name=".DzieckoLocationActivity" >
-        </activity>
-        <activity android:name=".ChooseRoleActivity" >
+
         </activity>
     </application>
 

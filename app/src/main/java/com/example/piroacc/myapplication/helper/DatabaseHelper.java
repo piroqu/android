@@ -12,6 +12,7 @@ import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,6 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DEBUG_LOG_INSERT = "SQL INSERT : ";
     private static final String DEBUG_LOG_SELECT = "SQL SELECT : ";
     private static final String DEBUG_LOG_UPDATE = "SQL UPDATE : ";
+    private static final String DEBUG_LOG_GET = "DATE FROM DATABASE ";
 
 
     public static final String DATABASE_NAME = "USER_DATABASE",
@@ -52,7 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String CREATE_UZYTKOWNIK = "CREATE TABLE " + TABLE_USER + " (" +
             KEY_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-            KEY_CREATION_DATE + " timestamp , " +
+            KEY_CREATION_DATE + " varchar(255) , " +
             KEY_PASSWORD + " varchar(255) NOT NULL, " +
             KEY_IMIE + "   integer(10) NOT NULL, " +
             KEY_EMAIL + " varchar(255), " +
@@ -131,16 +133,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         wartosci.put(KEY_POSITION_TIMESTAMP, position.getData());
         wartosci.put(KEY_IS_SYNCHRONIZED, position.isCzyZsynchronizowano());
         wartosci.put(FK_CHILD, position.getFkDzieckoId());
-
         db.insertOrThrow(TABLE_CHILD_POSITION, null, wartosci);
     }
 
     public void insertUzytkownik(Uzytkownik user) {
+        Log.d(DEBUG_LOG_INSERT, "try to inser user data : " + user);
         SQLiteDatabase db = getWritableDatabase();
         ContentValues wartosci = new ContentValues();
         wartosci.put(KEY_PASSWORD, user.getHaslo());
         wartosci.put(KEY_IMIE, user.getImie());
         db.insertOrThrow(TABLE_USER, null, wartosci);
+        Log.d(DEBUG_LOG_INSERT, "user data inserted : " + wartosci);
+    }
+    public void insertUzytkownikAsParent(Uzytkownik user) {
+        Log.d(DEBUG_LOG_INSERT, "try to inser user data as parent : " + user);
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues wartosci = new ContentValues();
+        wartosci.put(KEY_ID, user.getId());
+        wartosci.put(KEY_CREATION_DATE, user.getDataUtworzenia().toString());
+        wartosci.put(KEY_PASSWORD,user.getHaslo());
+        wartosci.put(KEY_IMIE, user.getImie());
+        wartosci.put(KEY_EMAIL, user.getEmail());
+        wartosci.put(KEY_PHONE_NUMER, user.getNumerTelefonu());
+        wartosci.put(KEY_IS_RODZIC, 1);
+        db.insertOrThrow(TABLE_USER, null, wartosci);
+        Log.d(DEBUG_LOG_INSERT, "user data inserted as parent : " + wartosci);
     }
 
     public List<Uzytkownik> getUsers(){
@@ -154,6 +171,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             users.add(tempUser);
         }
         return users;
+    }
+    public List<Uzytkownik> getParents(){
+        Log.d(DEBUG_LOG_GET, "STARTED");
+        String[] columns = {KEY_ID,KEY_CREATION_DATE,KEY_PASSWORD,KEY_IMIE,KEY_EMAIL,KEY_PHONE_NUMER,KEY_IS_RODZIC};
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USER, columns, KEY_IS_RODZIC+"=?", new String[]{"1"}, null, null, null);
+        List<Uzytkownik> parents = new ArrayList();
+        while(cursor.moveToNext()){
+            Uzytkownik tempUser = new Uzytkownik();
+            tempUser.setId(cursor.getInt(0));
+            tempUser.setDataUtworzenia(cursor.getString(1));
+            tempUser.setHaslo(cursor.getString(2));
+            tempUser.setImie(cursor.getString(3));
+            tempUser.setEmail(cursor.getString(4));
+            tempUser.setNumerTelefonu(cursor.getString(5));
+            parents.add(tempUser);
+            Log.d(DEBUG_LOG_GET, tempUser.toString());
+        }
+        Log.d(DEBUG_LOG_GET, "Size of all parents :" + parents.size());
+        return parents;
     }
 
     public List<Pozycja> getPositions(){

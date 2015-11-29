@@ -14,75 +14,72 @@ public class RodzicMDTORequest implements java.io.Serializable {
     private String email;
     private String numerTelefonu;
 
-    public void setImie(String imie) {
-        this.imie = imie;
+    @Override
+    public String toString() {
+        return "RodzicMDTORequest{" +
+                "rodzicId=" + rodzicId +
+                ", dataUtworzenia=" + dataUtworzenia +
+                ", imie='" + imie + '\'' +
+                ", haslo='" + haslo + '\'' +
+                ", status=" + status +
+                ", email='" + email + '\'' +
+                ", numerTelefonu='" + numerTelefonu + '\'' +
+                '}';
     }
 
-    public String getImie() {
-
-        return imie;
+    public Integer getRodzicId() {
+        return rodzicId;
     }
 
     public void setRodzicId(Integer rodzicId) {
         this.rodzicId = rodzicId;
     }
 
+    public String getDataUtworzenia() {
+        return dataUtworzenia;
+    }
+
     public void setDataUtworzenia(String dataUtworzenia) {
         this.dataUtworzenia = dataUtworzenia;
     }
 
-    public void setHaslo(String haslo) {
-        this.haslo = haslo;
+    public String getImie() {
+        return imie;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setNumerTelefonu(String numerTelefonu) {
-        this.numerTelefonu = numerTelefonu;
-    }
-
-    public Integer getRodzicId() {
-
-        return rodzicId;
-    }
-
-    public String getDataUtworzenia() {
-        return dataUtworzenia;
+    public void setImie(String imie) {
+        this.imie = imie;
     }
 
     public String getHaslo() {
         return haslo;
     }
 
+    public void setHaslo(String haslo) {
+        this.haslo = haslo;
+    }
+
     public boolean isStatus() {
         return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public String getEmail() {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getNumerTelefonu() {
         return numerTelefonu;
     }
 
-    public RodzicMDTORequest() {
-
-    }
-
-    public RodzicMDTORequest(String dataUtworzenia, String imie, String haslo, boolean status, String email, String numerTelefonu) {
-        this.dataUtworzenia = dataUtworzenia;
-        this.imie = imie;
-        this.haslo = haslo;
-        this.status = status;
-        this.email = email;
+    public void setNumerTelefonu(String numerTelefonu) {
         this.numerTelefonu = numerTelefonu;
     }
-
 }

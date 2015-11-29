@@ -8,13 +8,23 @@ import java.util.Date;
 public class Uzytkownik  {
 
     private Integer id;
-    private Date dataUtworzenia;
+    private String dataUtworzenia;
     private String haslo;
     private String imie;
     private String email;
     private String numerTelefonu;
 
-
+    @Override
+    public String toString() {
+        return "Uzytkownik{" +
+                "id=" + id +
+                ", dataUtworzenia=" + dataUtworzenia +
+                ", haslo='" + haslo + '\'' +
+                ", imie='" + imie + '\'' +
+                ", email='" + email + '\'' +
+                ", numerTelefonu='" + numerTelefonu + '\'' +
+                '}';
+    }
 
     public Integer getId() {
         return id;
@@ -24,11 +34,11 @@ public class Uzytkownik  {
         this.id = id;
     }
 
-    public Date getDataUtworzenia() {
+    public String getDataUtworzenia() {
         return dataUtworzenia;
     }
 
-    public void setDataUtworzenia(Date dataUtworzenia) {
+    public void setDataUtworzenia(String dataUtworzenia) {
         this.dataUtworzenia = dataUtworzenia;
     }
 

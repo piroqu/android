@@ -1,5 +1,7 @@
 package com.example.piroacc.myapplication.model.dto.response;
 
+import java.util.Date;
+
 /**
  * Created by PiroACC on 2015-11-28.
  */

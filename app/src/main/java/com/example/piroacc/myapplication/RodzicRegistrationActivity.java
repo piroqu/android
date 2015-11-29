@@ -7,55 +7,132 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.piroacc.myapplication.helper.DatabaseHelper;
+import com.example.piroacc.myapplication.helper.DateParser;
+import com.example.piroacc.myapplication.model.Uzytkownik;
+import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
+import com.example.piroacc.myapplication.model.dto.response.RodzicMDTOResponse;
 import com.example.piroacc.myapplication.rest.parent.RodzicRegister;
+
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 public class RodzicRegistrationActivity extends AppCompatActivity {
 
-    public static final String logInfo = "registerButton";
+    public static final String LOG_UI_INFO = "REGISTRATION PARENT UI DATA ";
 
-    public void registerButton(View v){
-
-        EditText imieUI =(EditText) findViewById(R.id.txtImie);
-        String name = imieUI.getText().toString();
-        Log.d(logInfo, "name : " + name);
-        EditText emailUI =(EditText) findViewById(R.id.txtEmail);
-        String email = emailUI.getText().toString();
-        Log.d(logInfo, "email : " + email);
-        EditText numerTelefonuUI =(EditText) findViewById(R.id.txtNumerTelefonu);
-        String numerTelefonu = numerTelefonuUI.getText().toString();
-        Log.d(logInfo, "email : " + numerTelefonu);
-        EditText hasloUI =(EditText) findViewById(R.id.txtHaslo);
-        String haslo = hasloUI.getText().toString();
-        Log.d(logInfo, "email : " + haslo);
-        Toast.makeText(getApplicationContext(), "Wysylam request", Toast.LENGTH_SHORT).show();
-        String[] userData = {name,email,numerTelefonu,haslo};
-        new RodzicRegister().execute(userData);   // dodac jakiegos boola ktory zostanie zwrocony z async taska
-        // if(asyncDone){goToParnetRegistrationPage}
-        goToParentReigstrationPage(v);
-    }
-
-    private void goToParentReigstrationPage(View v){
-        Intent i = new Intent(this,RodzicMapsActivity.class);
-        startActivity(i);
-    }
-
-    Button b1;
+    private static final String LOG_PARENT_REGISTRATION = "PARENT REGISTRATION ";
+    private Button b1;
     private EditText emailTextView;
+    private EditText imieUI;
+    private EditText emailUI;
+    private EditText numerTelefonuUI;
+    private EditText hasloUI;
 
-    Bundle bundle ;
-    String recievedEmail;
+    private String email;
+    private String numerTelefonu;
+    private String haslo;
+    private String imie;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rodzic_registration);
+            findUIElements();
+            getUIElementsValues();
+    }
+    public void registerButton(View v) {
+        Toast.makeText(getApplicationContext(), "Wysylam request", Toast.LENGTH_SHORT).show();
+        RodzicMDTORequest rodzicMDTORequest = createRegistrationRequestBasedOnUIValues();
+        try {
+            RodzicMDTOResponse rodzicMDTOResponse = new RodzicRegister().execute(rodzicMDTORequest).get();
+            rodzicMDTORequest.setRodzicId(rodzicMDTOResponse.getParentId());
+            Uzytkownik user = createUser(rodzicMDTORequest);
+            DatabaseHelper.getInstance(this).insertUzytkownikAsParent(user);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+/*    //TODO DELETE if registration2 works
+    public void registerButton(View v) {
+
+        EditText imieUI = (EditText) findViewById(R.id.txtImie);
+        String name = imieUI.getText().toString();
+        Log.d(LOG_UI_INFO, "name : " + name);
+        EditText emailUI = (EditText) findViewById(R.id.txtEmail);
+        String email = emailUI.getText().toString();
+        Log.d(LOG_UI_INFO, "email : " + email);
+        EditText numerTelefonuUI = (EditText) findViewById(R.id.txtNumerTelefonu);
+        String numerTelefonu = numerTelefonuUI.getText().toString();
+        Log.d(LOG_UI_INFO, "numerTelefonu : " + numerTelefonu);
+        EditText hasloUI = (EditText) findViewById(R.id.txtHaslo);
+        String haslo = hasloUI.getText().toString();
+        Log.d(LOG_UI_INFO, "haslo : " + haslo);
+        Toast.makeText(getApplicationContext(), "Wysylam request", Toast.LENGTH_SHORT).show();
+        Uzytkownik userData = createUser(name, haslo, email, numerTelefonu);
+//        String[] userData = {name,email,numerTelefonu,haslo};
+        try {
+            Log.d(LOG_PARENT_REGISTRATION, "SENDS DATA : " + userData);
+            RodzicMDTOResponse response = new RodzicRegister().execute(userData).get();
+            Log.d(LOG_PARENT_REGISTRATION, "RECIEVED DATA parent ID :" + response.getParentId());
+            DatabaseHelper.getInstance(this).insertUzytkownikAsParent(user);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        goToMap(v);
+    }*/
+
+    public RodzicMDTORequest createRegistrationRequestBasedOnUIValues() {
+        getUIElementsValues();
+        RodzicMDTORequest rodzicMDTORequest = new RodzicMDTORequest();
+        rodzicMDTORequest.setEmail(email);
+        rodzicMDTORequest.setHaslo(haslo);
+        rodzicMDTORequest.setNumerTelefonu(numerTelefonu);
+        rodzicMDTORequest.setImie(imie);
+        rodzicMDTORequest.setDataUtworzenia(DateParser.getCurrentParsedDateAsString());
+        rodzicMDTORequest.setStatus(true);
+        return rodzicMDTORequest;
+    }
+
+    public Uzytkownik createUser(RodzicMDTORequest rodzicMDTORequest) {
+        Uzytkownik user = new Uzytkownik();
+        user.setId(rodzicMDTORequest.getRodzicId());
+        user.setImie(rodzicMDTORequest.getImie());
+        user.setHaslo(rodzicMDTORequest.getHaslo());
+        user.setEmail(rodzicMDTORequest.getEmail());
+        user.setNumerTelefonu(rodzicMDTORequest.getNumerTelefonu());
+        user.setDataUtworzenia(DateParser.getCurrentParsedDateAsString());
+        return user;
+    }
+
+    private void goToMap(View v) {
+        Intent i = new Intent(this, RodzicMapsActivity.class);
+        startActivity(i);
+    }
+    private void findUIElements() {
         b1 = (Button) findViewById(R.id.btnRegisterParent);
-        emailTextView =(EditText) findViewById(R.id.txtEmail);
-        bundle = getIntent().getExtras();
-        recievedEmail = bundle.getString("email");
-        emailTextView.setText(recievedEmail);
+        imieUI = (EditText) findViewById(R.id.txtImie);
+        emailUI = (EditText) findViewById(R.id.txtEmail);
+        numerTelefonuUI = (EditText) findViewById(R.id.txtNumerTelefonu);
+        hasloUI = (EditText) findViewById(R.id.txtHaslo);
+        emailTextView = (EditText) findViewById(R.id.txtEmail);
+    }
+
+    private void getUIElementsValues() {
+        imie = imieUI.getText().toString();
+        Log.d(LOG_UI_INFO, "imie : " + imie);
+        email = emailUI.getText().toString();
+        Log.d(LOG_UI_INFO, "email : " + email);
+        numerTelefonu = numerTelefonuUI.getText().toString();
+        Log.d(LOG_UI_INFO, "numerTelefonu : " + numerTelefonu);
+        haslo = hasloUI.getText().toString();
+        Log.d(LOG_UI_INFO, "haslo : " + haslo);
     }
 }
