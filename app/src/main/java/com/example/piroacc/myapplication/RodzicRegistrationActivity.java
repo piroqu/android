@@ -36,7 +36,7 @@ public class RodzicRegistrationActivity extends AppCompatActivity {
     }
 
     private void goToParentReigstrationPage(View v){
-        Intent i = new Intent(this,MapsActivity.class);
+        Intent i = new Intent(this,RodzicMapsActivity.class);
         startActivity(i);
     }
 
