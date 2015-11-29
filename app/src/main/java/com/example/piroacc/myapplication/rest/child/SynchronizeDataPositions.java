@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.piroacc.myapplication.PozycjaList;
+import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.dto.response.DzieckoMDTOResponse;
 import com.example.piroacc.myapplication.resources.Constant;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * Created by PiroACC on 2015-11-28.
  */
-public class SynchronizeDataPositions extends AsyncTask <Pozycja, Void, Void>{
+public class SynchronizeDataPositions extends AsyncTask <Pozycja, Void, List<Pozycja>>{
 
     private final static String SYNCHRONIZE_DATA_POSITION = "praca/rest/child/synchronize/";
 
@@ -39,21 +40,22 @@ public class SynchronizeDataPositions extends AsyncTask <Pozycja, Void, Void>{
 
     public List<Pozycja> postByRestTemplate(Pozycja [] positions){
         // The connection URL
-        String tempUserId = "1";
-        String url = Constant.HOST_ADDRES + SYNCHRONIZE_DATA_POSITION +tempUserId;
+        String url = Constant.HOST_ADDRES + SYNCHRONIZE_DATA_POSITION;
 // Create a new RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
 // Add the String message converter
 //        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 // Make the HTTP GET request, marshaling the response to a String
-        Log.d(LOG_SYNCHRONIZE, "SENDS : " + positions);
+        for(Pozycja tmp : positions){
+            Log.d(LOG_SYNCHRONIZE, "SENDS : " + tmp);
+        }
         ResponseEntity<Pozycja[]> response = restTemplate.postForEntity(url, positions, Pozycja[].class);
         List<Pozycja> responseAsList = Arrays.asList(response.getBody());
         for(Pozycja tmp : responseAsList){
             Log.d(LOG_SYNCHRONIZE, "RESULT : " +tmp.toString() );
         }
-        return null;
+        return responseAsList;
     }
 
     public void post(Pozycja[] positions) throws IOException {
@@ -87,8 +89,7 @@ public class SynchronizeDataPositions extends AsyncTask <Pozycja, Void, Void>{
     }
 
     @Override
-    protected Void doInBackground(Pozycja... params) {
-        postByRestTemplate(params);
-        return null;
+    protected List<Pozycja> doInBackground(Pozycja... params) {
+        return postByRestTemplate(params);
     }
 }

@@ -16,6 +16,7 @@ import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
+import com.example.piroacc.myapplication.rest.child.DzieckoRegister;
 import com.example.piroacc.myapplication.rest.child.SynchronizeDataPositions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -25,6 +26,7 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class DzieckoLocationActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
@@ -111,9 +113,20 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
     public void synchronize(View view){
         Log.d("SYNC", "SYNC PRESSED");
         List<Pozycja> positionsToSync = DatabaseHelper.getInstance(this).getPositionsToSync();
-        Pozycja[] stockArr = new Pozycja[positionsToSync.size()];
-        stockArr = positionsToSync.toArray(stockArr);
-        new SynchronizeDataPositions().execute(stockArr);
+        if(positionsToSync.size() >0) {
+            Log.d("SYNC", "THERE IS DATA TO SYNC : " + positionsToSync.size() );
+            Pozycja[] stockArr = new Pozycja[positionsToSync.size()];
+            stockArr = positionsToSync.toArray(stockArr);
+            try {
+                List<Pozycja> positionsToUpdate = new SynchronizeDataPositions().execute(stockArr).get();
+                DatabaseHelper.getInstance(this).updateSynchronizedPositions(positionsToUpdate);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }else
+        Log.d("SYNC", "NO DATA TO SYNC : " + positionsToSync.size() );
     }
 
     /**
@@ -275,8 +288,7 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         position.setData(DateParser.getCurrentParsedDateAsString());
         position.setDlugoscGeograficzna(longitude);
         position.setSzerokoscGeograficzna(latitude);
-        position.setFkDzieckoId(DatabaseHelper.getInstance(this).getCurrentChildId());
-        position.setFkDzieckoId(1);
+        position.setFkDzieckoId(DzieckoRegistrationActivity.DZIECKO_ID);
         return position;
     }
 }

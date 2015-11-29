@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 public class DzieckoRegistrationActivity extends AppCompatActivity {
 
     public static final String logInfo = "Dziecko registerButton:";
+    public static Integer DZIECKO_ID;
 
 
     public void registerButton(View v){
@@ -40,6 +41,7 @@ public class DzieckoRegistrationActivity extends AppCompatActivity {
         }
         if (responseBody!= null){
             Dziecko dziecko = new Dziecko(responseBody.getDzieckoId(),name);
+            DZIECKO_ID = dziecko.getId();
             DatabaseHelper.getInstance(this).insertDziecko(dziecko);
             goToLocationChildActivity(v);
         }

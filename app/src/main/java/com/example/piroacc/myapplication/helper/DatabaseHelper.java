@@ -23,6 +23,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DEBUG_LOG = "SQL CREATOR : ";
     private static final String DEBUG_LOG_INSERT = "SQL INSERT : ";
     private static final String DEBUG_LOG_SELECT = "SQL SELECT : ";
+    private static final String DEBUG_LOG_UPDATE = "SQL UPDATE : ";
+
 
     public static final String DATABASE_NAME = "USER_DATABASE",
 
@@ -173,6 +175,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return positions;
     }
 
+    public void updateSynchronizedPositions(List <Pozycja> positions){
+        ContentValues contentValues = new ContentValues();
+        SQLiteDatabase db = getReadableDatabase();
+        for(Pozycja tempPosition: positions){
+            contentValues.put(KEY_CHILD_POSITION_ID,tempPosition.getId());
+            contentValues.put(KEY_LONGITUDE,tempPosition.getDlugoscGeograficzna());
+            contentValues.put(KEY_LATITUDE,tempPosition.getSzerokoscGeograficzna());
+            contentValues.put(KEY_POSITION_TIMESTAMP,tempPosition.getData());
+            contentValues.put(KEY_IS_SYNCHRONIZED,tempPosition.isCzyZsynchronizowano());
+            contentValues.put(FK_CHILD, tempPosition.getFkDzieckoId());
+            Log.d(DEBUG_LOG_UPDATE, "TO UPDATE: " + contentValues.toString());
+            db.update(TABLE_CHILD_POSITION, contentValues, KEY_CHILD_POSITION_ID + "=" + tempPosition.getId(), null);
+            Log.d(DEBUG_LOG_UPDATE, "UDPATED : " + contentValues.toString());
+        }
+        Log.d(DEBUG_LOG_UPDATE, "ALL DATA UPDATED : ");
+    }
+
     public List<Pozycja> getPositionsToSync(){
         Log.d(DEBUG_LOG_SELECT, "select positions to sync");
         String[] positionColumns = {KEY_CHILD_POSITION_ID,KEY_LONGITUDE,KEY_LATITUDE,KEY_POSITION_TIMESTAMP,KEY_IS_SYNCHRONIZED,FK_CHILD};
@@ -201,7 +220,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_CHILD, childColumns, null, null, null, null, null);
         cursor.moveToNext();
         Integer chilId= cursor.getInt(1);
-        Log.d(DEBUG_LOG_SELECT, "select current child id :" +chilId);
+        Log.d(DEBUG_LOG_SELECT, "select current child id : " +chilId);
         return chilId;
     }
 }
