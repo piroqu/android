@@ -19,6 +19,6 @@
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_test_locator">TestLocator</string>
 
-
+    <string name="menu_bar_parent_my_childrens">Moje dzieci</string>
 
 </resources>

@@ -1,5 +1,7 @@
 package com.example.piroacc.myapplication.model.dto.request;
 
+import com.example.piroacc.myapplication.model.Uzytkownik;
+
 import java.util.Date;
 
 /**
@@ -14,6 +16,14 @@ public class DzieckoMDTORequest implements java.io.Serializable {
     private String imie;
 
     public DzieckoMDTORequest() {
+    }
+
+    public DzieckoMDTORequest(Uzytkownik user) {
+        this.dzieckoId = user.getId();
+        this.dataUtworzenia = user.getDataUtworzenia();
+        this.haslo = user.getHaslo();
+        this.status = true;
+        this.imie = user.getImie();
     }
 
     public DzieckoMDTORequest(Integer dzieckoId, String dataUtworzenia, String haslo, boolean status, String imie) {

@@ -1,9 +1,7 @@
-package com.example.piroacc.myapplication;
+package com.example.piroacc.myapplication.activity.child;
 
-import android.location.Criteria;
+import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,11 +10,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Pozycja;
-import com.example.piroacc.myapplication.model.Uzytkownik;
-import com.example.piroacc.myapplication.rest.child.DzieckoRegister;
 import com.example.piroacc.myapplication.rest.child.SynchronizeDataPositions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -24,14 +21,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class DzieckoLocationActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class DzieckoMainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     // LogCat tag
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = DzieckoMainActivity.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
@@ -55,37 +51,30 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
     private TextView txtLong;
     private Button btnRefresh;
     private Button btnSynchronzie;
+    private Button btnAddParent;
 
     private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dziecko_location);
-        txtProvider = (TextView) findViewById(R.id.txtProvider);
-        txtLat = (TextView) findViewById(R.id.txtLatitude);
-        txtLong = (TextView) findViewById(R.id.txtLongitude);
-        btnRefresh = (Button) findViewById(R.id.btnRefresh);
-        btnSynchronzie= (Button) findViewById(R.id.btnSynchronize);
-        db=new DatabaseHelper(this);
-               Log.d("DATABASE CREATOR", "z FirstScreenActivity");
-        Log.d("DATABASE CREATOR", "CREATED");
-
-        Uzytkownik user = new Uzytkownik();
-        user.setEmail("werwe@qwee.pl");
-        user.setImie("Imje");
-        user.setHaslo("123chusd");
-        Log.d("DATABASE CREATOR", "USER BEFORE");
-//        db.insertUzytkownik(user);
-        Log.d("DATABASE CREATOR", "USER INSERTED!");
-        List<Uzytkownik> users = db.getUsers();
-        Log.d("DATABASE SIZE : " , String.valueOf(users.size()));
-        // First we need to check availability of play services
+        setContentView(R.layout.activity_dziecko_main_);
+        db = new DatabaseHelper(this);
+        findUIElements();
         if (checkPlayServices()) {
             // Building the GoogleApi client
             buildGoogleApiClient();
             createLocationRequest();
         }
+    }
+
+    private void findUIElements() {
+        txtProvider = (TextView) findViewById(R.id.txtProvider);
+        txtLat = (TextView) findViewById(R.id.txtLatitude);
+        txtLong = (TextView) findViewById(R.id.txtLongitude);
+        btnRefresh = (Button) findViewById(R.id.btnRefresh);
+        btnSynchronzie = (Button) findViewById(R.id.btnSynchronize);
+        btnAddParent = (Button) findViewById(R.id.btnAddParent);
     }
 
     @Override
@@ -105,16 +94,22 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         }
     }
 
+    public void goToDzieckoRequestConnectionToParentActivity(View view){
+        Intent i = new Intent(this,DzieckoRequestConnectionToParentActivity.class);
+        startActivity(i);
+    }
+
     public void refresh(View view) {
         Log.d("REFRESH", "REFRESH PRESSED");
         displayLocation();
         startLocationUpdates();
     }
-    public void synchronize(View view){
+
+    public void synchronize(View view) {
         Log.d("SYNC", "SYNC PRESSED");
         List<Pozycja> positionsToSync = DatabaseHelper.getInstance(this).getPositionsToSync();
-        if(positionsToSync.size() >0) {
-            Log.d("SYNC", "THERE IS DATA TO SYNC : " + positionsToSync.size() );
+        if (positionsToSync.size() > 0) {
+            Log.d("SYNC", "THERE IS DATA TO SYNC : " + positionsToSync.size());
             Pozycja[] stockArr = new Pozycja[positionsToSync.size()];
             stockArr = positionsToSync.toArray(stockArr);
             try {
@@ -125,8 +120,8 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-        }else
-        Log.d("SYNC", "NO DATA TO SYNC : " + positionsToSync.size() );
+        } else
+            Log.d("SYNC", "NO DATA TO SYNC : " + positionsToSync.size());
     }
 
     /**
@@ -215,6 +210,7 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
                 mGoogleApiClient, mLocationRequest, this);
 
     }
+
     /**
      * Stopping location updates
      */
@@ -222,6 +218,7 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }
+
     /**
      * Creating location request object
      */
@@ -230,9 +227,8 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FATEST_INTERVAL);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-       // mLocationRequest.setSmallestDisplacement(DISPLACEMENT); // 10 meters
+        // mLocationRequest.setSmallestDisplacement(DISPLACEMENT); // 10 meters
     }
-
 
 
     @Override
@@ -277,13 +273,13 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         displayLocation();
     }
 
-    private void insertPozycja(double longitude,double latitude){
+    private void insertPozycja(double longitude, double latitude) {
         DatabaseHelper db = new DatabaseHelper(this);
         db.insertPozycja(createPozycja(longitude, latitude));
     }
 
-    private Pozycja createPozycja(double longitude, double latitude){
-        Pozycja position= new Pozycja();
+    private Pozycja createPozycja(double longitude, double latitude) {
+        Pozycja position = new Pozycja();
         position.setCzyZsynchronizowano(false);
         position.setData(DateParser.getCurrentParsedDateAsString());
         position.setDlugoscGeograficzna(longitude);

@@ -1,4 +1,4 @@
-package com.example.piroacc.myapplication;
+package com.example.piroacc.myapplication.activity.parent;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Uzytkownik;
@@ -16,7 +17,6 @@ import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
 import com.example.piroacc.myapplication.model.dto.response.RodzicMDTOResponse;
 import com.example.piroacc.myapplication.rest.parent.RodzicRegister;
 
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 public class RodzicRegistrationActivity extends AppCompatActivity {

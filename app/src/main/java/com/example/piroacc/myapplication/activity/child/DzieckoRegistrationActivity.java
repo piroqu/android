@@ -1,4 +1,4 @@
-package com.example.piroacc.myapplication;
+package com.example.piroacc.myapplication.activity.child;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,12 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.helper.DateParser;
-import com.example.piroacc.myapplication.model.Dziecko;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.DzieckoMDTORequest;
-import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
 import com.example.piroacc.myapplication.model.dto.response.DzieckoMDTOResponse;
 import com.example.piroacc.myapplication.rest.child.DzieckoRegister;
 
@@ -73,7 +72,7 @@ public class DzieckoRegistrationActivity extends AppCompatActivity {
         return user;
     }
     private void goToLocationChildActivity(View v){
-        Intent i = new Intent(this,DzieckoLocationActivity.class);
+        Intent i = new Intent(this,DzieckoMainActivity.class);
         startActivity(i);
     }
 
