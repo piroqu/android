@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.rest.parent.RodzicRegister;
@@ -16,6 +17,7 @@ public class RodzicRegistrationActivity extends AppCompatActivity {
     public static final String logInfo = "registerButton";
 
     public void registerButton(View v){
+
         EditText imieUI =(EditText) findViewById(R.id.txtImie);
         String name = imieUI.getText().toString();
         Log.d(logInfo, "name : " + name);
@@ -41,11 +43,19 @@ public class RodzicRegistrationActivity extends AppCompatActivity {
     }
 
     Button b1;
+    private EditText emailTextView;
+
+    Bundle bundle ;
+    String recievedEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rodzic_registration);
-        b1 = (Button) findViewById(R.id.btnRegister);
+        b1 = (Button) findViewById(R.id.btnRegisterParent);
+        emailTextView =(EditText) findViewById(R.id.txtEmail);
+        bundle = getIntent().getExtras();
+        recievedEmail = bundle.getString("email");
+        emailTextView.setText(recievedEmail);
     }
 }

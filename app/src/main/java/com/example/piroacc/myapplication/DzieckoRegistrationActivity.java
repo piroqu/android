@@ -57,7 +57,7 @@ public class DzieckoRegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dziecko_registration);
-        b1= (Button) findViewById(R.id.btnRegister);
+        b1= (Button) findViewById(R.id.btnRegisterParent);
     }
 
     private void goToLocationChildActivity(View v){

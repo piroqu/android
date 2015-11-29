@@ -1,15 +1,12 @@
 package com.example.piroacc.myapplication;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.piroacc.myapplication.rest.child.DzieckoRegister;
 import com.example.piroacc.myapplication.rest.child.SendConnectionRequest;
 
 public class DzieckoMainActivity extends AppCompatActivity {
@@ -30,7 +27,7 @@ public class DzieckoMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dziecko_screen);
-        b1 = (Button) findViewById(R.id.btnRegister);
+        b1 = (Button) findViewById(R.id.btnRegisterParent);
     }
 
 }
