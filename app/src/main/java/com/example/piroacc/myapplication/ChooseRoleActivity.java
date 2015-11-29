@@ -33,8 +33,13 @@ public class ChooseRoleActivity extends AppCompatActivity {
         }
     }
     public void goToChildRegistrationPage(View v) {
-        Intent i = new Intent(this, DzieckoRegistrationActivity.class);
-        startActivity(i);
+        if(DatabaseHelper.getInstance(this).getChilds().size()==0) {
+            Intent i = new Intent(this, DzieckoRegistrationActivity.class);
+            startActivity(i);
+        }else{
+            Intent i = new Intent(this, DzieckoMainActivity.class);
+            startActivity(i);
+        }
     }
 
 }

@@ -136,14 +136,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insertOrThrow(TABLE_CHILD_POSITION, null, wartosci);
     }
 
-    public void insertUzytkownik(Uzytkownik user) {
-        Log.d(DEBUG_LOG_INSERT, "try to inser user data : " + user);
+    public void insertUzytkownikDziecko(Uzytkownik user) {
+        Log.d(DEBUG_LOG_INSERT, "try to inser user data as child : " + user);
         SQLiteDatabase db = getWritableDatabase();
         ContentValues wartosci = new ContentValues();
+        wartosci.put(KEY_ID,user.getId());
         wartosci.put(KEY_PASSWORD, user.getHaslo());
         wartosci.put(KEY_IMIE, user.getImie());
+        wartosci.put(KEY_IS_RODZIC,0);
         db.insertOrThrow(TABLE_USER, null, wartosci);
-        Log.d(DEBUG_LOG_INSERT, "user data inserted : " + wartosci);
+        Log.d(DEBUG_LOG_INSERT, "user data inserted as child : " + wartosci);
     }
     public void insertUzytkownikAsParent(Uzytkownik user) {
         Log.d(DEBUG_LOG_INSERT, "try to inser user data as parent : " + user);
@@ -191,6 +193,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         Log.d(DEBUG_LOG_GET, "Size of all parents :" + parents.size());
         return parents;
+    }
+
+    public List<Uzytkownik> getChilds(){
+        Log.d(DEBUG_LOG_GET, "STARTED");
+        String[] columns = {KEY_ID,KEY_CREATION_DATE,KEY_PASSWORD,KEY_IMIE,KEY_EMAIL,KEY_PHONE_NUMER,KEY_IS_RODZIC};
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USER, columns, KEY_IS_RODZIC+"=?", new String[]{"0"}, null, null, null);
+        List<Uzytkownik> childs = new ArrayList();
+        while(cursor.moveToNext()){
+            Uzytkownik tempUser = new Uzytkownik();
+            tempUser.setId(cursor.getInt(0));
+            tempUser.setDataUtworzenia(cursor.getString(1));
+            tempUser.setHaslo(cursor.getString(2));
+            tempUser.setImie(cursor.getString(3));
+            tempUser.setEmail(cursor.getString(4));
+            tempUser.setNumerTelefonu(cursor.getString(5));
+            childs.add(tempUser);
+            Log.d(DEBUG_LOG_GET, tempUser.toString());
+        }
+        Log.d(DEBUG_LOG_GET, "Size of all childs :" + childs.size());
+        return childs;
     }
 
     public List<Pozycja> getPositions(){

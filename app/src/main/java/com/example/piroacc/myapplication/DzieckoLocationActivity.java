@@ -76,7 +76,7 @@ public class DzieckoLocationActivity extends AppCompatActivity implements Google
         user.setImie("Imje");
         user.setHaslo("123chusd");
         Log.d("DATABASE CREATOR", "USER BEFORE");
-        db.insertUzytkownik(user);
+//        db.insertUzytkownik(user);
         Log.d("DATABASE CREATOR", "USER INSERTED!");
         List<Uzytkownik> users = db.getUsers();
         Log.d("DATABASE SIZE : " , String.valueOf(users.size()));

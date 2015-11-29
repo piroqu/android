@@ -10,7 +10,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.helper.DatabaseHelper;
+import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Dziecko;
+import com.example.piroacc.myapplication.model.Uzytkownik;
+import com.example.piroacc.myapplication.model.dto.request.DzieckoMDTORequest;
+import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
 import com.example.piroacc.myapplication.model.dto.response.DzieckoMDTOResponse;
 import com.example.piroacc.myapplication.rest.child.DzieckoRegister;
 
@@ -18,50 +22,74 @@ import java.util.concurrent.ExecutionException;
 
 public class DzieckoRegistrationActivity extends AppCompatActivity {
 
-    public static final String logInfo = "Dziecko registerButton:";
+    public static final String DEBUG_LOG_UI = "DZIECKO UI ";
     public static Integer DZIECKO_ID;
 
+    private Button b1;
+    private EditText imieUI;
+    private EditText hasloUI;
+
+    private String imie;
+    private String haslo;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dziecko_registration);
+        DatabaseHelper.getInstance(this).getChilds();
+        findUIElements();
+        getUIElementsValues();
+    }
 
     public void registerButton(View v){
-        EditText imieUI =(EditText) findViewById(R.id.txtImie);
-        String name = imieUI.getText().toString();
-        Log.d(logInfo, "name : " + name);
-        EditText emailUI =(EditText) findViewById(R.id.txtPassword);
-        String email = emailUI.getText().toString();
-        Log.d(logInfo, "email : " + email);
         Toast.makeText(getApplicationContext(), "Wysylam request", Toast.LENGTH_SHORT).show();
-        String[] userData = {name,email};
-        DzieckoMDTOResponse responseBody = null;
+        DzieckoMDTORequest dzieckoMDTORequest =createRegistrationRequestBasedOnUIValues();
+        DzieckoMDTOResponse dzieckoMDTOResponse = null;
         try {
-            responseBody = new DzieckoRegister().execute(userData).get();
+            dzieckoMDTOResponse = new DzieckoRegister().execute(dzieckoMDTORequest).get();
+            dzieckoMDTORequest.setDzieckoId(dzieckoMDTOResponse.getDzieckoId());
+            Uzytkownik user = createUser(dzieckoMDTORequest);
+            DatabaseHelper.getInstance(this).insertUzytkownikDziecko(user);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        if (responseBody!= null){
-            Dziecko dziecko = new Dziecko(responseBody.getDzieckoId(),name);
-            DZIECKO_ID = dziecko.getId();
-            DatabaseHelper.getInstance(this).insertDziecko(dziecko);
-            goToLocationChildActivity(v);
-        }
-        else {
-            Toast.makeText(getApplicationContext(),
-                    "Ops ! Cos nie dziala, serwer? Aplikacja? - nie wyslalem requesta !", Toast.LENGTH_LONG)
-                    .show();
-        }
+    }
+    private DzieckoMDTORequest createRegistrationRequestBasedOnUIValues() {
+        getUIElementsValues();
+        DzieckoMDTORequest dzieckoMDTORequest = new DzieckoMDTORequest();
+        dzieckoMDTORequest.setImie(imie);
+        dzieckoMDTORequest.setHaslo(haslo);
+        dzieckoMDTORequest.setStatus(true);
+        return dzieckoMDTORequest;
     }
 
-    Button b1;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dziecko_registration);
-        b1= (Button) findViewById(R.id.btnRegisterParent);
+    public Uzytkownik createUser(DzieckoMDTORequest dzieckoMDTORequest) {
+        Uzytkownik user = new Uzytkownik();
+        user.setId(dzieckoMDTORequest.getDzieckoId());
+        user.setImie(dzieckoMDTORequest.getImie());
+        user.setHaslo(dzieckoMDTORequest.getHaslo());
+        user.setDataUtworzenia(DateParser.getCurrentParsedDateAsString());
+        return user;
     }
-
     private void goToLocationChildActivity(View v){
         Intent i = new Intent(this,DzieckoLocationActivity.class);
         startActivity(i);
     }
+
+    private void findUIElements(){
+        b1= (Button) findViewById(R.id.btnRegisterParent);
+        imieUI =(EditText) findViewById(R.id.txtImie);
+        hasloUI =(EditText) findViewById(R.id.txtPassword);
+
+    }
+
+    public void getUIElementsValues(){
+        imie = imieUI.getText().toString();
+        Log.d(DEBUG_LOG_UI, "imie : " + imie);
+        haslo = hasloUI.getText().toString();
+        Log.d(DEBUG_LOG_UI, "haslo : " + haslo);
+    }
+
+
 }

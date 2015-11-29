@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by PiroACC on 2015-11-27.
  */
-public class DzieckoMDTO implements java.io.Serializable {
+public class DzieckoMDTORequest implements java.io.Serializable {
 
     private Integer dzieckoId;
     private String dataUtworzenia;
@@ -13,10 +13,10 @@ public class DzieckoMDTO implements java.io.Serializable {
     private boolean status;
     private String imie;
 
-    public DzieckoMDTO() {
+    public DzieckoMDTORequest() {
     }
 
-    public DzieckoMDTO(Integer dzieckoId, String dataUtworzenia, String haslo, boolean status, String imie) {
+    public DzieckoMDTORequest(Integer dzieckoId, String dataUtworzenia, String haslo, boolean status, String imie) {
         this.dzieckoId = dzieckoId;
         this.dataUtworzenia = dataUtworzenia;
         this.haslo = haslo;
