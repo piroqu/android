@@ -1,5 +1,6 @@
 package com.example.piroacc.myapplication.activity.parent;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -18,12 +19,17 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+
+    private static final String DEBUG_LOG = "RODZIC MAPS ";
+
+    private ArrayList<Pozycja> childsPozytions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +39,18 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        childsPozytions =  this.getIntent().getParcelableArrayListExtra("childenLocalizations");
+        Log.d(DEBUG_LOG, "CHILDRENS POSITIONS : " + childsPozytions.size());
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        for (Pozycja temp : childsPozytions) {
+            LatLng point = new LatLng(temp.getSzerokoscGeograficzna(), temp.getDlugoscGeograficzna());
+            mMap.addMarker(new MarkerOptions().position(point).title("Marker"));
+        }
     }
 
     @Override

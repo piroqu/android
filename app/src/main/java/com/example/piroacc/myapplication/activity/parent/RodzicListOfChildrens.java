@@ -1,6 +1,7 @@
 package com.example.piroacc.myapplication.activity.parent;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,7 @@ import com.example.piroacc.myapplication.activity.child.DzieckoRegistrationActiv
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.rest.parent.RodzicGetChildPositions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -28,8 +30,13 @@ public class RodzicListOfChildrens extends AppCompatActivity {
     public void goToMapAndShowChildrenLocalization(View view){
         try {
             List<Pozycja> positions = new RodzicGetChildPositions().execute(51).get();
+            for(Pozycja tmp : positions){
+                tmp.setId(51);
+                tmp.setFkDzieckoId(51);
+            }
+            ArrayList<Pozycja> positionsAsArray = new ArrayList<Pozycja>(positions);
             Intent i = new Intent(this, RodzicMapsActivity.class);
-            i.putExtra("childenLocalizations",positions );
+            i.putParcelableArrayListExtra("childenLocalizations",  positionsAsArray);
             startActivity(i);
         } catch (InterruptedException e) {
             e.printStackTrace();
