@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
-import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.rest.child.SynchronizeDataPositions;
@@ -53,13 +52,11 @@ public class DzieckoMainActivity extends AppCompatActivity implements GoogleApiC
     private Button btnSynchronzie;
     private Button btnAddParent;
 
-    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dziecko_main_);
-        db = new DatabaseHelper(this);
         findUIElements();
         if (checkPlayServices()) {
             // Building the GoogleApi client
@@ -103,25 +100,6 @@ public class DzieckoMainActivity extends AppCompatActivity implements GoogleApiC
         Log.d("REFRESH", "REFRESH PRESSED");
         displayLocation();
         startLocationUpdates();
-    }
-
-    public void synchronize(View view) {
-        Log.d("SYNC", "SYNC PRESSED");
-        List<Pozycja> positionsToSync = DatabaseHelper.getInstance(this).getPositionsToSync();
-        if (positionsToSync.size() > 0) {
-            Log.d("SYNC", "THERE IS DATA TO SYNC : " + positionsToSync.size());
-            Pozycja[] stockArr = new Pozycja[positionsToSync.size()];
-            stockArr = positionsToSync.toArray(stockArr);
-            try {
-                List<Pozycja> positionsToUpdate = new SynchronizeDataPositions().execute(stockArr).get();
-                DatabaseHelper.getInstance(this).updateSynchronizedPositions(positionsToUpdate);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        } else
-            Log.d("SYNC", "NO DATA TO SYNC : " + positionsToSync.size());
     }
 
     /**
@@ -264,18 +242,9 @@ public class DzieckoMainActivity extends AppCompatActivity implements GoogleApiC
         Log.d("LOCATION", " CHANGED ");
         Toast.makeText(getApplicationContext(), "Location changed!",
                 Toast.LENGTH_SHORT).show();
-        Log.d("LOCATION", " INSERT TO DATABASE ");
-        Log.d("LOCATION", "POZYCJE przed insert : " + db.getPositions());
-        insertPozycja(location.getLongitude(), location.getLatitude());
-        Log.d("LOCATION", "POZYCJE po insert: " + db.getPositions());
 
         // Displaying the new location on UI
         displayLocation();
-    }
-
-    private void insertPozycja(double longitude, double latitude) {
-        DatabaseHelper db = new DatabaseHelper(this);
-        db.insertPozycja(createPozycja(longitude, latitude));
     }
 
     private Pozycja createPozycja(double longitude, double latitude) {

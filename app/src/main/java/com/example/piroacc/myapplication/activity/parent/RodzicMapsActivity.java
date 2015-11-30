@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
-import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.model.Dziecko;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
@@ -43,7 +42,6 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        currentParent= DatabaseHelper.getInstance(this).getCurrentRodzic();
 //        childsPozytions =  this.getIntent().getParcelableArrayListExtra("childenLocalizations");
 //        Log.d(DEBUG_LOG, "CHILDRENS POSITIONS : " + childsPozytions.size());
     }
@@ -93,7 +91,6 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
              */
             case R.id.parentTest:
                 request = new RodzicMDTORequest(currentParent);
-                List<Uzytkownik> childs = DatabaseHelper.getInstance(this).getChilds();
             /*    for(Uzytkownik child : childs){
                     DatabaseHelper.getInstance(this).addChildrenForParent(child);
                 }*/
@@ -117,7 +114,6 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
                     List<KolejkaRodzicMDTOResponse> requests =new RodzicCheckRequests().execute(request).get();
                     for(KolejkaRodzicMDTOResponse tmp: requests) {
                         Dziecko dziecko = new Dziecko(tmp);
-                        DatabaseHelper.getInstance(this).addChildrenForParent(dziecko);
                     }
 
             } catch (InterruptedException e) {

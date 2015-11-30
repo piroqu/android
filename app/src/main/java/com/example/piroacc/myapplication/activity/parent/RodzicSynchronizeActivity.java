@@ -11,6 +11,7 @@ import com.example.piroacc.myapplication.model.dto.response.KolejkaRodzicMDTORes
 import com.example.piroacc.myapplication.rest.parent.RodzicCheckRequests;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class RodzicSynchronizeActivity extends AppCompatActivity {
 
@@ -24,7 +25,13 @@ public class RodzicSynchronizeActivity extends AppCompatActivity {
         KolejkaRodzicMDTOResponse test = new KolejkaRodzicMDTOResponse();
 
         RodzicMDTORequest request =null;
-        List<KolejkaRodzicMDTOResponse> requests =new RodzicCheckRequests().execute(request).get();
+        try {
+            List<KolejkaRodzicMDTOResponse> requests =new RodzicCheckRequests().execute(request).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
         this.arraySpinner = new KolejkaRodzicMDTOResponse[] {
                 test

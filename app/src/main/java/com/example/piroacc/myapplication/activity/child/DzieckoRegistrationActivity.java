@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
-import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.DzieckoMDTORequest;
@@ -34,7 +33,6 @@ public class DzieckoRegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dziecko_registration);
-        DatabaseHelper.getInstance(this).getChilds();
         findUIElements();
         getUIElementsValues();
     }
@@ -47,7 +45,6 @@ public class DzieckoRegistrationActivity extends AppCompatActivity {
             dzieckoMDTOResponse = new DzieckoRegister().execute(dzieckoMDTORequest).get();
             dzieckoMDTORequest.setDzieckoId(dzieckoMDTOResponse.getDzieckoId());
             Uzytkownik user = createUser(dzieckoMDTORequest);
-            DatabaseHelper.getInstance(this).insertUzytkownikDziecko(user);
             goToLocationChildActivity();
         } catch (InterruptedException e) {
             e.printStackTrace();

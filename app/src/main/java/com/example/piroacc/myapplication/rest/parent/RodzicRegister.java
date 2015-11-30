@@ -3,7 +3,6 @@ package com.example.piroacc.myapplication.rest.parent;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;

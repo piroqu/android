@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.piroacc.myapplication.R;
-import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.DzieckoMDTORequest;
 import com.example.piroacc.myapplication.rest.child.SendConnectionRequest;
@@ -28,7 +27,6 @@ public class DzieckoRequestConnectionToParentActivity extends AppCompatActivity 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dziecko_request_to_parent);
         findUIElements();
-        currentChild = DatabaseHelper.getInstance(this).getChilds().get(0);
     }
 
     public void sendRequest(View v){

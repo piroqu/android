@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
-import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
@@ -53,7 +52,6 @@ public class RodzicRegistrationActivity extends AppCompatActivity {
             RodzicMDTOResponse rodzicMDTOResponse = new RodzicRegister().execute(rodzicMDTORequest).get();
             rodzicMDTORequest.setRodzicId(rodzicMDTOResponse.getParentId());
             Uzytkownik user = createUser(rodzicMDTORequest);
-            DatabaseHelper.getInstance(this).insertUzytkownikAsParent(user);
             goToMap();
         } catch (InterruptedException e) {
             e.printStackTrace();
