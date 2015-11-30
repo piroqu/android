@@ -22,6 +22,9 @@
 
     <string name="menu_bar_parent_my_childrens">Moje dzieci</string>
     <string name="menu_bar_parent_synchronize">Synchronizuj</string>
+    <string name="menu_bar_parent_test">TEST</string>
+    <string name="menu_bar_synchronize">TEST SYNCHRONZIE</string>
+
 
 
 </resources>

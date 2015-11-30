@@ -1,5 +1,7 @@
 package com.example.piroacc.myapplication.model;
 
+import com.example.piroacc.myapplication.model.dto.response.KolejkaRodzicMDTOResponse;
+
 /**
  * Created by PiroACC on 2015-11-27.
  */
@@ -9,6 +11,11 @@ public class Dziecko {
     private String imie;
 
     public Dziecko() {
+    }
+
+    public Dziecko (KolejkaRodzicMDTOResponse kolejkaRodzicMDTOResponse){
+        id = kolejkaRodzicMDTOResponse.getDzieckodzieckoId();
+        imie = "TESTOWE";
     }
 
     public Dziecko(Integer id, String imie) {

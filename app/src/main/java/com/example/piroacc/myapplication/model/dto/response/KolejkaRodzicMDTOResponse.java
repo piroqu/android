@@ -10,12 +10,14 @@ public class KolejkaRodzicMDTOResponse implements Serializable{
 
     private String typZadanie;
     private Integer dzieckodzieckoId;
+    private String imieDziecka;
 
     @Override
     public String toString() {
         return "KolejkaRodzicMDTOResponse{" +
                 "typZadanie='" + typZadanie + '\'' +
                 ", dzieckodzieckoId=" + dzieckodzieckoId +
+                ", imieDziecka='" + imieDziecka + '\'' +
                 '}';
     }
 
@@ -27,11 +29,19 @@ public class KolejkaRodzicMDTOResponse implements Serializable{
         this.typZadanie = typZadanie;
     }
 
-    public int getDzieckodzieckoId() {
+    public Integer getDzieckodzieckoId() {
         return dzieckodzieckoId;
     }
 
-    public void setDzieckodzieckoId(int dzieckodzieckoId) {
+    public void setDzieckodzieckoId(Integer dzieckodzieckoId) {
         this.dzieckodzieckoId = dzieckodzieckoId;
+    }
+
+    public String getImieDziecka() {
+        return imieDziecka;
+    }
+
+    public void setImieDziecka(String imieDziecka) {
+        this.imieDziecka = imieDziecka;
     }
 }

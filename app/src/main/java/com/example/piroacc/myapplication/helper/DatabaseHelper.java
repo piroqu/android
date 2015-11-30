@@ -62,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             KEY_IS_RODZIC + " integer(1));";
     public static final String CREATE_TELEFON_DZIECKO = "CREATE TABLE " + TABLE_CHILD + " (" +
             KEY_CHILD_KEY_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-            KEY_CHILD_NAME + " varchar(255) NOT NULL);";
+            KEY_CHILD_NAME + " varchar(255) );";
     public static final String CREATE_TELEFON_POZYCJA = "CREATE TABLE "+ TABLE_CHILD_POSITION+ " ("+
             KEY_CHILD_POSITION_ID +" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
             KEY_LONGITUDE  +" double(10) NOT NULL, " +
@@ -120,6 +120,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues wartosci = new ContentValues();
         wartosci.put(KEY_CHILD_KEY_ID, dziecko.getId());
+//        wartosci.put(KEY_CHILD_NAME, dziecko.getImie());
+        db.insertOrThrow(TABLE_CHILD, null, wartosci);
+        Log.d(DEBUG_LOG_INSERT, dziecko + "to : " + TABLE_CHILD + "OK!");
+    }
+
+    public void addChildrenForParent(Dziecko dziecko){
+        Log.d(DEBUG_LOG_INSERT, dziecko + "to : " + TABLE_CHILD);
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues wartosci = new ContentValues();
+        wartosci.put(KEY_CHILD_KEY_ID, dziecko.getId());
         wartosci.put(KEY_CHILD_NAME, dziecko.getImie());
         db.insertOrThrow(TABLE_CHILD, null, wartosci);
         Log.d(DEBUG_LOG_INSERT, dziecko + "to : " + TABLE_CHILD + "OK!");
@@ -153,7 +163,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues wartosci = new ContentValues();
         wartosci.put(KEY_ID, user.getId());
         wartosci.put(KEY_CREATION_DATE, user.getDataUtworzenia().toString());
-        wartosci.put(KEY_PASSWORD,user.getHaslo());
+        wartosci.put(KEY_PASSWORD, user.getHaslo());
         wartosci.put(KEY_IMIE, user.getImie());
         wartosci.put(KEY_EMAIL, user.getEmail());
         wartosci.put(KEY_PHONE_NUMER, user.getNumerTelefonu());
@@ -239,6 +249,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String[] positionColumns = {KEY_CHILD_POSITION_ID,KEY_LONGITUDE,KEY_LATITUDE,KEY_POSITION_TIMESTAMP,KEY_IS_SYNCHRONIZED,FK_CHILD};
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_CHILD_POSITION, positionColumns, null, null, null, null, null);
+        List<Pozycja> positions = new ArrayList();
+        while(cursor.moveToNext()){
+            Pozycja tempPosition = new Pozycja();
+            tempPosition.setId(cursor.getInt(0));
+            tempPosition.setDlugoscGeograficzna(cursor.getDouble(1));
+            tempPosition.setSzerokoscGeograficzna(cursor.getDouble(2));
+            tempPosition.setData(cursor.getString(3));
+            boolean value =cursor.getInt(4) >0 ;
+            tempPosition.setCzyZsynchronizowano(value);
+            tempPosition.setFkDzieckoId(cursor.getInt(5));
+            positions.add(tempPosition);
+        }
+        return positions;
+    }
+
+    public List<Pozycja> getChildsPosition(String childId){
+        String[] positionColumns = {KEY_CHILD_POSITION_ID,KEY_LONGITUDE,KEY_LATITUDE,KEY_POSITION_TIMESTAMP,KEY_IS_SYNCHRONIZED,FK_CHILD};
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_CHILD_POSITION, positionColumns, KEY_CHILD_POSITION_ID +"=?", new String[]{childId}, null, null, null);
         List<Pozycja> positions = new ArrayList();
         while(cursor.moveToNext()){
             Pozycja tempPosition = new Pozycja();

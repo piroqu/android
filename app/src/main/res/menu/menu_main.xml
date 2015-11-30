@@ -12,4 +12,13 @@
         android:title="@string/menu_bar_parent_synchronize"
         />
 
+    <item
+        android:id="@+id/parentTest"
+        android:title="@string/menu_bar_parent_test"
+        />
+    <item
+        android:id="@+id/parentSynchronizeTest"
+        android:title="@string/menu_bar_parent_synchronize"
+        />
+
 </menu>

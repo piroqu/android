@@ -8,14 +8,18 @@ import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.helper.DatabaseHelper;
+import com.example.piroacc.myapplication.model.Dziecko;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
 import com.example.piroacc.myapplication.model.dto.response.KolejkaRodzicMDTOResponse;
 import com.example.piroacc.myapplication.rest.parent.RodzicCheckRequests;
+import com.example.piroacc.myapplication.rest.parent.RodzicGetChildPositions;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,13 +67,15 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        RodzicMDTORequest request =null;
+
         switch (item.getItemId()) {
             case R.id.parentChildrens:
                 Toast.makeText(getBaseContext(), "You selected moje dzieci", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.parentSynchronize:
                 Toast.makeText(getBaseContext(), "You selected snychronize", Toast.LENGTH_SHORT).show();
-                RodzicMDTORequest request = new RodzicMDTORequest(currentParent);
+                request = new RodzicMDTORequest(currentParent);
                 try {
                     List<KolejkaRodzicMDTOResponse> requests =new RodzicCheckRequests().execute(request).get();
                 } catch (InterruptedException e) {
@@ -78,6 +84,51 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
                     e.printStackTrace();
                 }
                 break;
+            /**
+             * co tu bedzie?
+             * pobierz liste wszystkich dzieci - dodaj je do lokalnej bazy
+             * wybierz pierwszy element
+             * pobierz jego pozycje z serwera
+             * wyswietl je
+             */
+            case R.id.parentTest:
+                request = new RodzicMDTORequest(currentParent);
+                List<Uzytkownik> childs = DatabaseHelper.getInstance(this).getChilds();
+            /*    for(Uzytkownik child : childs){
+                    DatabaseHelper.getInstance(this).addChildrenForParent(child);
+                }*/
+//                Uzytkownik selectedChild = childs.get(0);
+                try {
+                    List<Pozycja> childrenPositionsFromServer = new RodzicGetChildPositions().execute(1).get();
+//                    List<Pozycja> selectedChildrenPositions = DatabaseHelper.getInstance(this).getChildsPosition(String.valueOf(selectedChild.getId()));
+                    for (Pozycja temp : childrenPositionsFromServer) {
+                        LatLng point = new LatLng(temp.getSzerokoscGeograficzna(), temp.getDlugoscGeograficzna());
+                        mMap.addMarker(new MarkerOptions().position(point).title("Marker"));
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.parentSynchronizeTest:
+                request = new RodzicMDTORequest(currentParent);
+                try {
+                    List<KolejkaRodzicMDTOResponse> requests =new RodzicCheckRequests().execute(request).get();
+                    for(KolejkaRodzicMDTOResponse tmp: requests) {
+                        Dziecko dziecko = new Dziecko(tmp);
+                        DatabaseHelper.getInstance(this).addChildrenForParent(dziecko);
+                    }
+
+            } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                break;
+
+
         }
         return super.onOptionsItemSelected(item);
     }

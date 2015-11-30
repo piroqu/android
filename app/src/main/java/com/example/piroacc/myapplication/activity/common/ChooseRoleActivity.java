@@ -15,6 +15,11 @@ import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.activity.parent.RodzicMapsActivity;
 import com.example.piroacc.myapplication.activity.parent.RodzicRegistrationActivity;
 import com.example.piroacc.myapplication.helper.DatabaseHelper;
+import com.example.piroacc.myapplication.model.Uzytkownik;
+import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
+import com.example.piroacc.myapplication.rest.parent.RodzicLogin;
+
+import java.util.concurrent.ExecutionException;
 
 public class ChooseRoleActivity extends AppCompatActivity {
 
@@ -33,7 +38,21 @@ public class ChooseRoleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_role);
         findUIElements();
+    }
 
+    public void loginAsParent(View view){
+        try {
+            initializeUIELementsValues();
+            RodzicMDTORequest parentsData = new RodzicLogin().execute(emailOrIdzChild,haslo).get();
+            Uzytkownik currentParent = new Uzytkownik(parentsData);
+            DatabaseHelper.getInstance(this).insertUzytkownikAsParent(currentParent);
+            Intent i = new Intent(this, RodzicMapsActivity.class);
+            startActivity(i);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     private void findUIElements() {

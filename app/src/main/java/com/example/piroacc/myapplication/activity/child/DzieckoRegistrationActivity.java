@@ -48,6 +48,7 @@ public class DzieckoRegistrationActivity extends AppCompatActivity {
             dzieckoMDTORequest.setDzieckoId(dzieckoMDTOResponse.getDzieckoId());
             Uzytkownik user = createUser(dzieckoMDTORequest);
             DatabaseHelper.getInstance(this).insertUzytkownikDziecko(user);
+            goToLocationChildActivity();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -71,7 +72,7 @@ public class DzieckoRegistrationActivity extends AppCompatActivity {
         user.setDataUtworzenia(DateParser.getCurrentParsedDateAsString());
         return user;
     }
-    private void goToLocationChildActivity(View v){
+    private void goToLocationChildActivity(){
         Intent i = new Intent(this,DzieckoMainActivity.class);
         startActivity(i);
     }

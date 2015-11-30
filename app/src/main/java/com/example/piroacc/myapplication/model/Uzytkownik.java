@@ -1,5 +1,7 @@
 package com.example.piroacc.myapplication.model;
 
+import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
+
 import java.util.Date;
 
 /**
@@ -14,6 +16,19 @@ public class Uzytkownik  {
     private String email;
     private String numerTelefonu;
     private boolean isParent;
+
+    public Uzytkownik() {
+    }
+
+    public Uzytkownik(RodzicMDTORequest parentsData) {
+        id = parentsData.getRodzicId();
+        dataUtworzenia = parentsData.getDataUtworzenia();
+        haslo = parentsData.getHaslo();
+        imie = parentsData.getImie();
+        email = parentsData.getEmail();
+        numerTelefonu = parentsData.getNumerTelefonu();
+        isParent = true;
+    }
 
     @Override
     public String toString() {
