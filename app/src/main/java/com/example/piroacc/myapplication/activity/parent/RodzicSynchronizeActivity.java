@@ -24,7 +24,7 @@ public class RodzicSynchronizeActivity extends AppCompatActivity {
         KolejkaRodzicMDTOResponse test = new KolejkaRodzicMDTOResponse();
 
         RodzicMDTORequest request =null;
-        List<KolejkaRodzicMDTOResponse> requests =new RodzicCheckRequests().execute(request).get();
+//        List<KolejkaRodzicMDTOResponse> requests =new RodzicCheckRequests().execute(request).get();
 
         this.arraySpinner = new KolejkaRodzicMDTOResponse[] {
                 test

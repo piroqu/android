@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.piroacc.myapplication.activity.child.DzieckoRegistrationActivity;
 import com.example.piroacc.myapplication.model.Dziecko;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
@@ -69,7 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             KEY_LATITUDE   +" double(10) NOT NULL, " +
             KEY_POSITION_TIMESTAMP+" varchar(255) , " +
             KEY_IS_SYNCHRONIZED + " integer(1) NOT NULL, " +
-            FK_CHILD +" integer(10) NOT NULL, " +
+            FK_CHILD +" integer(10) , " +
             "  FOREIGN KEY("+FK_CHILD+") REFERENCES "+TABLE_CHILD+"("+KEY_CHILD_KEY_ID+"));";
 
     private static final String DROP_USER = "DROP TABLE IF EXISTS telefon_uzytkownik;";
@@ -138,11 +139,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void insertPozycja(Pozycja position){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues wartosci = new ContentValues();
+        wartosci.put(KEY_CHILD_POSITION_ID, DzieckoRegistrationActivity.DZIECKO_ID);    //TODO MOCKING TO DELETE
+
         wartosci.put(KEY_LONGITUDE, position.getDlugoscGeograficzna());
         wartosci.put(KEY_LATITUDE, position.getSzerokoscGeograficzna());
         wartosci.put(KEY_POSITION_TIMESTAMP, position.getData());
         wartosci.put(KEY_IS_SYNCHRONIZED, position.isCzyZsynchronizowano());
         wartosci.put(FK_CHILD, position.getFkDzieckoId());
+        Log.d(DEBUG_LOG_INSERT, "INSERT POZYCJA :" + wartosci);
         db.insertOrThrow(TABLE_CHILD_POSITION, null, wartosci);
     }
 
@@ -156,6 +160,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         wartosci.put(KEY_IS_RODZIC,0);
         db.insertOrThrow(TABLE_USER, null, wartosci);
         Log.d(DEBUG_LOG_INSERT, "user data inserted as child : " + wartosci);
+        DzieckoRegistrationActivity.DZIECKO_ID = user.getId();
+        Log.d(DEBUG_LOG_INSERT, "SETS USER ID : " + DzieckoRegistrationActivity.DZIECKO_ID) ;
     }
     public void insertUzytkownikAsParent(Uzytkownik user) {
         Log.d(DEBUG_LOG_INSERT, "try to inser user data as parent : " + user);
@@ -327,7 +333,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_CHILD, childColumns, null, null, null, null, null);
         cursor.moveToNext();
-        Integer chilId= cursor.getInt(1);
+        Integer chilId= cursor.getInt(0);
         Log.d(DEBUG_LOG_SELECT, "select current child id : " +chilId);
         return chilId;
     }
