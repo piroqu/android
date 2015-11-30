@@ -162,6 +162,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(DEBUG_LOG_INSERT, "user data inserted as parent : " + wartosci);
     }
 
+    public Uzytkownik getCurrentRodzic(){
+        Log.d(DEBUG_LOG_GET, "in : getCurrentRodzic");
+        Log.d(DEBUG_LOG_GET, "Get data from :" + TABLE_USER);
+        String[] columns = {KEY_ID,KEY_CREATION_DATE,KEY_PASSWORD,KEY_IMIE,KEY_EMAIL,KEY_PHONE_NUMER,KEY_IS_RODZIC};
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USER, columns, null, null, null, null, null);
+        cursor.moveToNext();
+        Uzytkownik currentUser = new Uzytkownik();
+        currentUser.setId(cursor.getInt(0));
+        currentUser.setDataUtworzenia(cursor.getString(1));
+        currentUser.setHaslo(cursor.getString(2));
+        currentUser.setImie(cursor.getString(3));
+        currentUser.setEmail(cursor.getString(4));
+        currentUser.setNumerTelefonu(cursor.getString(5));
+        currentUser.setIsParent(true);
+        Log.d(DEBUG_LOG_GET, "Current user data:" + currentUser);
+        return currentUser;
+    }
+
     public List<Uzytkownik> getUsers(){
         String[] columns = {KEY_ID,KEY_CREATION_DATE,KEY_PASSWORD,KEY_IMIE,KEY_EMAIL,KEY_PHONE_NUMER,KEY_IS_RODZIC};
         SQLiteDatabase db = getReadableDatabase();

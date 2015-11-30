@@ -12,22 +12,58 @@
         android:layout_height="wrap_content"
         android:text="Rodzic"
         android:id="@+id/btnParent"
+        android:onClick="goToParentReigstrationPage"
+        android:layout_above="@+id/btnChild"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="goToParentReigstrationPage"/>
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dziecko"
         android:id="@+id/btnChild"
-        android:layout_below="@+id/btnParent"
+        android:onClick="goToChildRegistrationPage"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/btnParent"
+        android:layout_alignEnd="@+id/btnParent" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Email lub id dziecko"
+        android:ems="10"
+        android:id="@+id/editTxtEmailOrIdChild"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/editTextPassword"
+        android:layout_below="@+id/editTxtEmailOrIdChild"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/btnParent"
+        android:layout_alignEnd="@+id/btnParent"
+        android:text="Haslo" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zaloguj rodzic"
+        android:id="@+id/btnParentLogin"
+        android:layout_above="@+id/btnParent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="goToChildRegistrationPage"/>
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

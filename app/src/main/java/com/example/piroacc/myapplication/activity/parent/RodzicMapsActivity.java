@@ -1,23 +1,21 @@
 package com.example.piroacc.myapplication.activity.parent;
 
-import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
+import com.example.piroacc.myapplication.helper.DatabaseHelper;
 import com.example.piroacc.myapplication.model.Pozycja;
-import com.example.piroacc.myapplication.rest.parent.RodzicGetChildPositions;
+import com.example.piroacc.myapplication.model.Uzytkownik;
+import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
+import com.example.piroacc.myapplication.model.dto.response.KolejkaRodzicMDTOResponse;
+import com.example.piroacc.myapplication.rest.parent.RodzicCheckRequests;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +29,8 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
 
     private ArrayList<Pozycja> childsPozytions;
 
+    private Uzytkownik currentParent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,18 +39,19 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        childsPozytions =  this.getIntent().getParcelableArrayListExtra("childenLocalizations");
-        Log.d(DEBUG_LOG, "CHILDRENS POSITIONS : " + childsPozytions.size());
+        currentParent= DatabaseHelper.getInstance(this).getCurrentRodzic();
+//        childsPozytions =  this.getIntent().getParcelableArrayListExtra("childenLocalizations");
+//        Log.d(DEBUG_LOG, "CHILDRENS POSITIONS : " + childsPozytions.size());
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        for (Pozycja temp : childsPozytions) {
+/*        for (Pozycja temp : childsPozytions) {
             LatLng point = new LatLng(temp.getSzerokoscGeograficzna(), temp.getDlugoscGeograficzna());
             mMap.addMarker(new MarkerOptions().position(point).title("Marker"));
-        }
+        }*/
     }
 
     @Override
@@ -65,6 +66,17 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
         switch (item.getItemId()) {
             case R.id.parentChildrens:
                 Toast.makeText(getBaseContext(), "You selected moje dzieci", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.parentSynchronize:
+                Toast.makeText(getBaseContext(), "You selected snychronize", Toast.LENGTH_SHORT).show();
+                RodzicMDTORequest request = new RodzicMDTORequest(currentParent);
+                try {
+                    List<KolejkaRodzicMDTOResponse> requests =new RodzicCheckRequests().execute(request).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);

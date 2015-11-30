@@ -13,6 +13,7 @@ public class Uzytkownik  {
     private String imie;
     private String email;
     private String numerTelefonu;
+    private boolean isParent;
 
     @Override
     public String toString() {
@@ -24,6 +25,14 @@ public class Uzytkownik  {
                 ", email='" + email + '\'' +
                 ", numerTelefonu='" + numerTelefonu + '\'' +
                 '}';
+    }
+
+    public boolean isParent() {
+        return isParent;
+    }
+
+    public void setIsParent(boolean isParent) {
+        this.isParent = isParent;
     }
 
     public Integer getId() {

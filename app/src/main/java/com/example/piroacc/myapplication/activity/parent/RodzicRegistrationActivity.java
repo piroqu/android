@@ -36,6 +36,8 @@ public class RodzicRegistrationActivity extends AppCompatActivity {
     private String haslo;
     private String imie;
 
+    private Bundle bundle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,42 +54,13 @@ public class RodzicRegistrationActivity extends AppCompatActivity {
             rodzicMDTORequest.setRodzicId(rodzicMDTOResponse.getParentId());
             Uzytkownik user = createUser(rodzicMDTORequest);
             DatabaseHelper.getInstance(this).insertUzytkownikAsParent(user);
+            goToMap();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
     }
-/*    //TODO DELETE if registration2 works
-    public void registerButton(View v) {
-
-        EditText imieUI = (EditText) findViewById(R.id.txtImie);
-        String name = imieUI.getText().toString();
-        Log.d(LOG_UI_INFO, "name : " + name);
-        EditText emailUI = (EditText) findViewById(R.id.txtEmail);
-        String email = emailUI.getText().toString();
-        Log.d(LOG_UI_INFO, "email : " + email);
-        EditText numerTelefonuUI = (EditText) findViewById(R.id.txtNumerTelefonu);
-        String numerTelefonu = numerTelefonuUI.getText().toString();
-        Log.d(LOG_UI_INFO, "numerTelefonu : " + numerTelefonu);
-        EditText hasloUI = (EditText) findViewById(R.id.txtHaslo);
-        String haslo = hasloUI.getText().toString();
-        Log.d(LOG_UI_INFO, "haslo : " + haslo);
-        Toast.makeText(getApplicationContext(), "Wysylam request", Toast.LENGTH_SHORT).show();
-        Uzytkownik userData = createUser(name, haslo, email, numerTelefonu);
-//        String[] userData = {name,email,numerTelefonu,haslo};
-        try {
-            Log.d(LOG_PARENT_REGISTRATION, "SENDS DATA : " + userData);
-            RodzicMDTOResponse response = new RodzicRegister().execute(userData).get();
-            Log.d(LOG_PARENT_REGISTRATION, "RECIEVED DATA parent ID :" + response.getParentId());
-            DatabaseHelper.getInstance(this).insertUzytkownikAsParent(user);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        goToMap(v);
-    }*/
 
     public RodzicMDTORequest createRegistrationRequestBasedOnUIValues() {
         getUIElementsValues();
@@ -112,7 +85,7 @@ public class RodzicRegistrationActivity extends AppCompatActivity {
         return user;
     }
 
-    private void goToMap(View v) {
+    private void goToMap() {
         Intent i = new Intent(this, RodzicMapsActivity.class);
         startActivity(i);
     }
@@ -123,9 +96,13 @@ public class RodzicRegistrationActivity extends AppCompatActivity {
         numerTelefonuUI = (EditText) findViewById(R.id.txtNumerTelefonu);
         hasloUI = (EditText) findViewById(R.id.txtHaslo);
         emailTextView = (EditText) findViewById(R.id.txtEmail);
+        bundle = getIntent().getExtras();
+        emailUI.setText(bundle.getString("email"));
+        hasloUI.setText(bundle.getString("haslo"));
     }
 
     private void getUIElementsValues() {
+
         imie = imieUI.getText().toString();
         Log.d(LOG_UI_INFO, "imie : " + imie);
         email = emailUI.getText().toString();

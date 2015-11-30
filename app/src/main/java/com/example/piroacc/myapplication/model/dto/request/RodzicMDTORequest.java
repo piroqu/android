@@ -1,5 +1,7 @@
 package com.example.piroacc.myapplication.model.dto.request;
 
+import com.example.piroacc.myapplication.model.Uzytkownik;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +15,19 @@ public class RodzicMDTORequest implements java.io.Serializable {
     private boolean status;
     private String email;
     private String numerTelefonu;
+
+    public RodzicMDTORequest() {
+    }
+
+    public RodzicMDTORequest(Uzytkownik currentParent) {
+       this.rodzicId=currentParent.getId();
+       this.dataUtworzenia=currentParent.getDataUtworzenia();
+       this.imie=currentParent.getImie();
+       this.haslo=currentParent.getHaslo();
+       this.status=true;
+       this.email=currentParent.getEmail();
+       this.numerTelefonu=currentParent.getNumerTelefonu();
+    }
 
     @Override
     public String toString() {
