@@ -5,5 +5,5 @@ package com.example.piroacc.myapplication.resources;
  */
 public class Constant {
 
-    public static final String HOST_ADDRES = "http://192.168.0.14:8080/";
+    public static final String HOST_ADDRES = "http://192.168.0.10:8080/";
 }

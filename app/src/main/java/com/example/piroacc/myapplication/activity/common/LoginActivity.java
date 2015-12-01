@@ -3,6 +3,7 @@ package com.example.piroacc.myapplication.activity.common;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,29 +32,33 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.piroacc.myapplication.R;
+import com.example.piroacc.myapplication.activity.child.ChildMainActivity;
+import com.example.piroacc.myapplication.model.dto.request.UserDataResponse;
+import com.example.piroacc.myapplication.resources.Constant;
+
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
+
+    private String email;
+    private String password;
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
+    private static final String DEBUG_LOG = "LOGIN REQUEST ";
+    private static final String LOGIN_PATH = "praca/rest/common/login/";
+
+    private UserDataResponse userDataResponse;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -155,8 +161,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        email = mEmailView.getText().toString();
+        password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -184,8 +190,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
@@ -199,7 +203,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 0;
     }
 
     /**
@@ -292,6 +296,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    private void goToChildMainActivity(UserDataResponse userDataResponse) {
+        Intent i = new Intent(this, ChildMainActivity.class);
+        i.putExtra("user data", userDataResponse);
+        startActivity(i);
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -310,23 +320,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
+            userDataResponse = getByRestTemplate(mEmail, mPassword);
+/*            for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
-            }
-
-            // TODO: register the new account here.
-            return true;
+            }*/
+            if (userDataResponse.getRole() != "none") {
+                return true;
+            } else return false;
         }
 
         @Override
@@ -335,6 +339,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                goToChildMainActivity(userDataResponse);
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -346,6 +351,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
+        }
+
+        public UserDataResponse getByRestTemplate(String email, String password) {
+            String url = Constant.HOST_ADDRES + LOGIN_PATH + email + "/" + password;
+            Log.d(DEBUG_LOG, "GET TO ADRES : " + url);
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+            UserDataResponse response = restTemplate.getForObject(url, UserDataResponse.class);
+            Log.d(DEBUG_LOG, "response : " + response);
+            return response;
         }
     }
 }

@@ -8,7 +8,7 @@ import android.widget.Spinner;
 import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
 import com.example.piroacc.myapplication.model.dto.response.KolejkaRodzicMDTOResponse;
-import com.example.piroacc.myapplication.rest.parent.RodzicCheckRequests;
+import com.example.piroacc.myapplication.async.parent.RodzicCheckRequests;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

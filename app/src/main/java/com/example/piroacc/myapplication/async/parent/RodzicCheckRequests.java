@@ -1,12 +1,9 @@
-package com.example.piroacc.myapplication.rest.parent;
+package com.example.piroacc.myapplication.async.parent;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.piroacc.myapplication.model.Pozycja;
-import com.example.piroacc.myapplication.model.dto.request.DzieckoMDTORequest;
 import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
-import com.example.piroacc.myapplication.model.dto.response.DzieckoMDTOResponse;
 import com.example.piroacc.myapplication.model.dto.response.KolejkaRodzicMDTOResponse;
 import com.example.piroacc.myapplication.resources.Constant;
 

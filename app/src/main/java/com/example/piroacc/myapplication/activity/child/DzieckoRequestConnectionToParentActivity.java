@@ -6,12 +6,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.DzieckoMDTORequest;
-import com.example.piroacc.myapplication.rest.child.SendConnectionRequest;
+import com.example.piroacc.myapplication.async.child.SendConnectionRequest;
 
 public class DzieckoRequestConnectionToParentActivity extends AppCompatActivity {
 
@@ -40,7 +39,7 @@ public class DzieckoRequestConnectionToParentActivity extends AppCompatActivity 
     }
 
     private void findUIElements(){
-        btnConnectionRequest = (Button) findViewById(R.id.btnRegisterParent);
+//        btnConnectionRequest = (Button) findViewById(R.id.btnRegisterParent);
         txtParentId= (EditText) findViewById(R.id.txtParentId);
     }
 

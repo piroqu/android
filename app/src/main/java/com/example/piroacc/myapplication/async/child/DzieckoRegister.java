@@ -1,26 +1,14 @@
-package com.example.piroacc.myapplication.rest.child;
+package com.example.piroacc.myapplication.async.child;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.dto.request.DzieckoMDTORequest;
 import com.example.piroacc.myapplication.model.dto.response.DzieckoMDTOResponse;
 import com.example.piroacc.myapplication.resources.Constant;
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * Created by PiroACC on 2015-11-27.

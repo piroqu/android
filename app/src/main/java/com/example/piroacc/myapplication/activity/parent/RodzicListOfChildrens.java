@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.model.Pozycja;
-import com.example.piroacc.myapplication.rest.parent.RodzicGetChildPositions;
+import com.example.piroacc.myapplication.async.parent.RodzicGetChildPositions;
 
 import java.util.ArrayList;
 import java.util.List;

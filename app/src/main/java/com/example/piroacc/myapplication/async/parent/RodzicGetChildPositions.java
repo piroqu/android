@@ -1,4 +1,4 @@
-package com.example.piroacc.myapplication.rest.parent;
+package com.example.piroacc.myapplication.async.parent;
 
 import android.os.AsyncTask;
 import android.util.Log;

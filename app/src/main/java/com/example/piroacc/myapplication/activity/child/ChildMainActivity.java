@@ -11,22 +11,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
+import com.example.piroacc.myapplication.async.child.SendPosition;
 import com.example.piroacc.myapplication.helper.DateParser;
+import com.example.piroacc.myapplication.model.Position;
 import com.example.piroacc.myapplication.model.Pozycja;
-import com.example.piroacc.myapplication.rest.child.SynchronizeDataPositions;
+import com.example.piroacc.myapplication.model.dto.request.UserDataResponse;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-public class DzieckoMainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class ChildMainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     // LogCat tag
-    private static final String TAG = DzieckoMainActivity.class.getSimpleName();
+    private static final String TAG = ChildMainActivity.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
@@ -39,6 +38,8 @@ public class DzieckoMainActivity extends AppCompatActivity implements GoogleApiC
     private boolean mRequestingLocationUpdates = false;
 
     private LocationRequest mLocationRequest;
+
+    private UserDataResponse userDataResponse;
 
     // Location updates intervals in sec
     private static int UPDATE_INTERVAL = 5000; // 5 sec
@@ -57,6 +58,8 @@ public class DzieckoMainActivity extends AppCompatActivity implements GoogleApiC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dziecko_main_);
+        Intent i = getIntent();
+        userDataResponse = (UserDataResponse) i.getParcelableExtra("user data");
         findUIElements();
         if (checkPlayServices()) {
             // Building the GoogleApi client
@@ -89,11 +92,6 @@ public class DzieckoMainActivity extends AppCompatActivity implements GoogleApiC
         if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
             startLocationUpdates();
         }
-    }
-
-    public void goToDzieckoRequestConnectionToParentActivity(View view){
-        Intent i = new Intent(this,DzieckoRequestConnectionToParentActivity.class);
-        startActivity(i);
     }
 
     public void refresh(View view) {
@@ -236,24 +234,20 @@ public class DzieckoMainActivity extends AppCompatActivity implements GoogleApiC
 
     @Override
     public void onLocationChanged(Location location) {
-        // Assign the new location
-        mLastLocation = location;
-
+        mLastLocation = location;   //adds new location
         Log.d("LOCATION", " CHANGED ");
         Toast.makeText(getApplicationContext(), "Location changed!",
                 Toast.LENGTH_SHORT).show();
-
-        // Displaying the new location on UI
+        Position positionToSync = createPositionToSync(location);
+        new SendPosition().execute(userDataResponse.getId(), positionToSync);
         displayLocation();
     }
 
-    private Pozycja createPozycja(double longitude, double latitude) {
-        Pozycja position = new Pozycja();
-        position.setCzyZsynchronizowano(false);
-        position.setData(DateParser.getCurrentParsedDateAsString());
-        position.setDlugoscGeograficzna(longitude);
-        position.setSzerokoscGeograficzna(latitude);
-        position.setFkDzieckoId(DzieckoRegistrationActivity.DZIECKO_ID);
+    private Position createPositionToSync(Location location) {
+        Position position = new Position();
+        position.setCreationDate(DateParser.getCurrentParsedDateAsString());
+        position.setLatitude(location.getLatitude());
+        position.setLongitude(location.getLongitude());
         return position;
     }
 }

@@ -1,24 +1,13 @@
-package com.example.piroacc.myapplication.rest.parent;
+package com.example.piroacc.myapplication.async.parent;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
-import com.example.piroacc.myapplication.model.dto.response.RodzicMDTOResponse;
 import com.example.piroacc.myapplication.resources.Constant;
 
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * Created by PiroACC on 2015-11-30.
