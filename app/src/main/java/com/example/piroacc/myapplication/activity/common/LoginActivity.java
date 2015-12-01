@@ -33,6 +33,7 @@ import android.widget.TextView;
 
 import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.activity.child.ChildMainActivity;
+import com.example.piroacc.myapplication.activity.parent.ParentMainActivity;
 import com.example.piroacc.myapplication.model.dto.request.UserDataResponse;
 import com.example.piroacc.myapplication.resources.Constant;
 
@@ -302,6 +303,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         startActivity(i);
     }
 
+    private void goToParentMaintActivity(UserDataResponse userDataResponse) {
+        Intent i = new Intent(this, ParentMainActivity.class);
+        i.putExtra("user data", userDataResponse);
+        startActivity(i);
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -338,8 +345,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
+            if (success && userDataResponse.getRole().equals("child")) {
                 goToChildMainActivity(userDataResponse);
+                finish();
+            } else if (success && userDataResponse.getRole().equals("parent")) {
+                goToParentMaintActivity(userDataResponse);
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

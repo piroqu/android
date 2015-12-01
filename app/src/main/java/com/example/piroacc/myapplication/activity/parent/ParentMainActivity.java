@@ -1,19 +1,25 @@
 package com.example.piroacc.myapplication.activity.parent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
+import com.example.piroacc.myapplication.async.parent.ParentGetChildrens;
 import com.example.piroacc.myapplication.model.Dziecko;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
+import com.example.piroacc.myapplication.model.dto.request.UserDataResponse;
 import com.example.piroacc.myapplication.model.dto.response.KolejkaRodzicMDTOResponse;
 import com.example.piroacc.myapplication.async.parent.RodzicCheckRequests;
 import com.example.piroacc.myapplication.async.parent.RodzicGetChildPositions;
+import com.example.piroacc.myapplication.model.dto.response.parent.ParentChildMDTOResponse;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -21,10 +27,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class ParentMainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
@@ -34,6 +41,13 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
 
     private Uzytkownik currentParent;
 
+    private UserDataResponse userData;
+
+    private List<ParentChildMDTOResponse> parentChildrens;
+
+    private Spinner childrensSpinner;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +56,39 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-//        childsPozytions =  this.getIntent().getParcelableArrayListExtra("childenLocalizations");
-//        Log.d(DEBUG_LOG, "CHILDRENS POSITIONS : " + childsPozytions.size());
+        findUIElements();
+        getUserData();
+        initializeParentChildrens();
+    }
+
+    private void showPositionForSelectedChildren() {
+        ParentChildMDTOResponse selectedChildren = (ParentChildMDTOResponse) childrensSpinner.getSelectedItem();
+    }
+
+    private void findUIElements() {
+        childrensSpinner = (Spinner) findViewById(R.id.spinnerChildrens);
+    }
+
+    private void addChildrensToSpinner() {
+        ArrayAdapter<ParentChildMDTOResponse> adapter = new ArrayAdapter<ParentChildMDTOResponse>(this,
+                android.R.layout.simple_spinner_item, parentChildrens);
+        childrensSpinner.setAdapter(adapter);
+    }
+
+    private void initializeParentChildrens() {
+        try {
+            parentChildrens = new ParentGetChildrens().execute(userData.getId()).get();
+            addChildrensToSpinner();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getUserData() {
+        Intent i = getIntent();
+        userData = (UserDataResponse) i.getParcelableExtra("user data");
     }
 
 
@@ -65,7 +110,7 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        RodzicMDTORequest request =null;
+        RodzicMDTORequest request = null;
 
         switch (item.getItemId()) {
             case R.id.parentChildrens:
@@ -75,7 +120,7 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
                 Toast.makeText(getBaseContext(), "You selected snychronize", Toast.LENGTH_SHORT).show();
                 request = new RodzicMDTORequest(currentParent);
                 try {
-                    List<KolejkaRodzicMDTOResponse> requests =new RodzicCheckRequests().execute(request).get();
+                    List<KolejkaRodzicMDTOResponse> requests = new RodzicCheckRequests().execute(request).get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -111,12 +156,12 @@ public class RodzicMapsActivity extends AppCompatActivity implements OnMapReadyC
             case R.id.parentSynchronizeTest:
                 request = new RodzicMDTORequest(currentParent);
                 try {
-                    List<KolejkaRodzicMDTOResponse> requests =new RodzicCheckRequests().execute(request).get();
-                    for(KolejkaRodzicMDTOResponse tmp: requests) {
+                    List<KolejkaRodzicMDTOResponse> requests = new RodzicCheckRequests().execute(request).get();
+                    for (KolejkaRodzicMDTOResponse tmp : requests) {
                         Dziecko dziecko = new Dziecko(tmp);
                     }
 
-            } catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();

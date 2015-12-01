@@ -47,7 +47,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activity.parent.RodzicMapsActivity"
+            android:name=".activity.parent.ParentMainActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".activity.child.DzieckoRequestConnectionToParentActivity" />
         <activity android:name=".activity.child.ChildMainActivity"></activity>

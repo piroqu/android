@@ -33,7 +33,7 @@ public class RodzicListOfChildrens extends AppCompatActivity {
                 tmp.setFkDzieckoId(51);
             }
             ArrayList<Pozycja> positionsAsArray = new ArrayList<Pozycja>(positions);
-            Intent i = new Intent(this, RodzicMapsActivity.class);
+            Intent i = new Intent(this, ParentMainActivity.class);
             i.putParcelableArrayListExtra("childenLocalizations",  positionsAsArray);
             startActivity(i);
         } catch (InterruptedException e) {
