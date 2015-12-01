@@ -18,8 +18,8 @@
         android:id="@+id/spinnerChildrens"
         android:layout_below="@+id/map"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:spinnerMode="dropdown" />
+        android:layout_alignParentStart="false"
+        android:spinnerMode="dialog" />
 
     <Button
         android:layout_width="wrap_content"
@@ -32,4 +32,45 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick="showPositionForSelectedChildren"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick time"
+        android:id="@+id/btnSelectTime"
+        android:onClick="showTimePickerFrom"
+        android:layout_below="@+id/spinnerChildrens"
+        android:layout_toLeftOf="@+id/btnPickDate"
+        android:layout_toStartOf="@+id/btnPickDate" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick date"
+        android:id="@+id/btnPickDate"
+        android:onClick="showDatePickerFrom"
+        android:layout_below="@+id/spinnerChildrens"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TO PICK"
+        android:id="@+id/btnToPickDate"
+        android:layout_above="@+id/btnShowPosition"
+        android:layout_alignLeft="@+id/btnSelectTime"
+        android:layout_alignStart="@+id/btnSelectTime"
+        android:onClick="showTimePickerTo"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TO DATe"
+        android:id="@+id/btnToPickDate"
+        android:layout_above="@+id/btnShowPosition"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="showDatePickerTo"/>
+
 </RelativeLayout>

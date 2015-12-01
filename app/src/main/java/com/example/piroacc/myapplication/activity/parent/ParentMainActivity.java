@@ -1,25 +1,30 @@
 package com.example.piroacc.myapplication.activity.parent;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.async.parent.ParentGetChildPositions;
 import com.example.piroacc.myapplication.async.parent.ParentGetChildrens;
-import com.example.piroacc.myapplication.model.Dziecko;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
 import com.example.piroacc.myapplication.model.dto.request.UserDataResponse;
-import com.example.piroacc.myapplication.model.dto.response.KolejkaRodzicMDTOResponse;
-import com.example.piroacc.myapplication.async.parent.RodzicCheckRequests;
 import com.example.piroacc.myapplication.model.dto.response.parent.ParentChildMDTOResponse;
 import com.example.piroacc.myapplication.model.dto.response.parent.PositionForParentMDTOResponse;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,6 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -48,6 +54,16 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
 
     private Spinner childrensSpinner;
 
+    public int fromHour;
+    public int fromMinutes;
+    public int toHour;
+    public int toMinutes;
+    public int fromYear;
+    public int fromDay;
+    public int fromMonth;
+    public int toYear;
+    public int toDay;
+    public int toMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +79,26 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void showPositionForSelectedChildren(View view) {
+        Log.d("fromHour" , String.valueOf(fromHour));
+        Log.d("fromMinutes" , String.valueOf(fromMinutes));
+        Log.d("toHour" , String.valueOf(toHour));
+        Log.d("toMinutes" , String.valueOf(toMinutes));
+        Log.d("fromYear" , String.valueOf(fromYear));
+        Log.d("fromDay" , String.valueOf(fromDay));
+        Log.d("fromMonth" , String.valueOf(fromMonth));
+        Log.d("toYear" , String.valueOf(toYear));
+        Log.d("toDay" , String.valueOf(toDay));
+        Log.d("toMonth" , String.valueOf(toMonth));
+
+
         ParentChildMDTOResponse selectedChildren = (ParentChildMDTOResponse) childrensSpinner.getSelectedItem();
         try {
+            fromMonth++;// TODO temp rozwiazanie, miesiace liczone od 0
+            toMonth++;
+            String fromDate = fromYear+"-"+fromMonth+"-"+fromDay+" "+fromHour+":"+fromMinutes+":00";
+            String toDate = toYear+"-"+toMonth+"-"+toDay+" "+toHour+":"+toMinutes+":00";
             List<PositionForParentMDTOResponse> childrenPositions = new ParentGetChildPositions().
-                    execute(selectedChildren.getChildId()).get();
+                    execute(String.valueOf(selectedChildren.getChildId()),fromDate,toDate).get();
             for (PositionForParentMDTOResponse temp : childrenPositions) {
                 LatLng point = new LatLng(temp.getLatitude(), temp.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(point).title("Marker"));
@@ -132,18 +164,123 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
             case R.id.parentSynchronize:
                 Toast.makeText(getBaseContext(), "You selected snychronize", Toast.LENGTH_SHORT).show();
                 request = new RodzicMDTORequest(currentParent);
-                try {
-                    List<KolejkaRodzicMDTOResponse> requests = new RodzicCheckRequests().execute(request).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
                 break;
 
         }
         return super.onOptionsItemSelected(item);
     }
+    public void showTimePickerFrom(View v) {
+        DialogFragment newFragment = new TimePickerFrom();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    public void showTimePickerTo(View v) {
+        DialogFragment newFragment = new TimePickerTo();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    public class TimePickerFrom extends DialogFragment
+            implements TimePickerDialog.OnTimeSetListener {
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current time as the default values for the picker
+            final Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int minute = c.get(Calendar.MINUTE);
+
+
+            // Create a new instance of TimePickerDialog and return it
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    DateFormat.is24HourFormat(getActivity()));
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            fromHour = hourOfDay;
+            fromMinutes=minute;
+            // Do something with the time chosen by the user
+        }
+    }
+
+    public class TimePickerTo extends DialogFragment
+            implements TimePickerDialog.OnTimeSetListener {
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current time as the default values for the picker
+            final Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int minute = c.get(Calendar.MINUTE);
+
+
+            // Create a new instance of TimePickerDialog and return it
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    DateFormat.is24HourFormat(getActivity()));
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            toHour = hourOfDay;
+            toMinutes=minute;
+            // Do something with the time chosen by the user
+        }
+    }
+    public void showDatePickerTo(View v) {
+        DialogFragment newFragment = new DatePickerTo();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+    public void showDatePickerFrom(View v) {
+        DialogFragment newFragment = new DatePickerFrom();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public class DatePickerFrom extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            fromYear=year;
+            fromMonth=month;
+            fromDay=day;
+            // Do something with the date chosen by the user
+        }
+    }
+
+    public class DatePickerTo extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            toYear=year;
+            toMonth=month;
+            toDay=day;
+            // Do something with the date chosen by the user
+        }
+    }
+
 
 /*    @Override
     public void onMapReady(GoogleMap googleMap) {

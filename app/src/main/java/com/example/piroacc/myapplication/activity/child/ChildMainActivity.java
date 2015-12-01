@@ -232,7 +232,7 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     protected void onPause() {
         super.onPause();
-        stopLocationUpdates();
+//        stopLocationUpdates();
     }
 
     @Override
