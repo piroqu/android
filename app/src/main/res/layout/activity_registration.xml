@@ -77,5 +77,18 @@
         android:layout_below="@+id/editTextPhoneNumber"
         android:layout_alignRight="@+id/editTextPhoneNumber"
         android:layout_alignEnd="@+id/editTextPhoneNumber"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dialog"
+        android:layout_toEndOf="@+id/textViewRole"
+        android:layout_toRightOf="@+id/textViewRole" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Select role : "
+        android:id="@+id/textViewRole"
+        android:layout_below="@+id/editTextPhoneNumber"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/spinnerRole" />
 </RelativeLayout>

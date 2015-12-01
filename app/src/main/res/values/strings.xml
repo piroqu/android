@@ -3,7 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_login_page">Sign in</string>
-    <string name="title_activity_common_registration_page">Rejestracja</string>
+    <string name="title_activity_child">Child Activity</string>
+    <string name="title_activity_common_registration_page">Registration</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

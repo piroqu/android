@@ -49,10 +49,13 @@
         <activity
             android:name=".activity.parent.ParentMainActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".activity.child.DzieckoRequestConnectionToParentActivity" />
-        <activity android:name=".activity.child.ChildMainActivity" />
+        <activity
+            android:name=".activity.child.ChildMainActivity"
+            android:label="@string/title_activity_child"/>
         <activity android:name=".activity.parent.RodzicSynchronizeActivity" />
-        <activity android:name=".activity.common.RegistrationActivity" >
+        <activity
+            android:name=".activity.common.RegistrationActivity"
+            android:label="@string/title_activity_common_registration_page">
         </activity>
     </application>
 

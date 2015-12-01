@@ -7,20 +7,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
+import com.example.piroacc.myapplication.async.child.SendConnectionRequest;
 import com.example.piroacc.myapplication.async.child.SendPosition;
 import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Position;
-import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.dto.request.UserDataResponse;
+import com.example.piroacc.myapplication.model.dto.response.child.ConnectionMDTOResponse;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.concurrent.ExecutionException;
 
 public class ChildMainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
@@ -46,18 +50,18 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
     private static int FATEST_INTERVAL = 2000; // 2 sec
     private static int DISPLACEMENT = 2; // 2 meters
 
-    private TextView txtProvider;
     private TextView txtLat;
     private TextView txtLong;
-    private Button btnRefresh;
-    private Button btnSynchronzie;
+    private EditText parentEmailEditText;
+    private Button btnTurnOnLocalization;
     private Button btnAddParent;
 
+    private String parentEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dziecko_main_);
+        setContentView(R.layout.activity_child_main);
         Intent i = getIntent();
         userDataResponse = (UserDataResponse) i.getParcelableExtra("user data");
         findUIElements();
@@ -69,12 +73,11 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
     }
 
     private void findUIElements() {
-        txtProvider = (TextView) findViewById(R.id.txtProvider);
-        txtLat = (TextView) findViewById(R.id.txtLatitude);
-        txtLong = (TextView) findViewById(R.id.txtLongitude);
-        btnRefresh = (Button) findViewById(R.id.btnRefresh);
-        btnSynchronzie = (Button) findViewById(R.id.btnSynchronize);
+        txtLat = (TextView) findViewById(R.id.editLat);
+        txtLong = (TextView) findViewById(R.id.editLong);
+        btnTurnOnLocalization = (Button) findViewById(R.id.btnLocalization);
         btnAddParent = (Button) findViewById(R.id.btnAddParent);
+        parentEmailEditText = (EditText) findViewById(R.id.editTextParentEmailAddress);
     }
 
     @Override
@@ -91,6 +94,25 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
         // Resuming the periodic location updates
         if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
             startLocationUpdates();
+        }
+    }
+
+    public void sendConnectionWithParent(View view) {
+        parentEmail = parentEmailEditText.getText().toString();
+        try {
+            ConnectionMDTOResponse response = new SendConnectionRequest().execute(userDataResponse.getId(), parentEmail).get();
+            if (response.getStatus().equals("ok")) {
+                Toast.makeText(getApplicationContext(), "You are connected with parent!",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Something went wrong, try again.",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
     }
 
@@ -242,6 +264,7 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
         new SendPosition().execute(userDataResponse.getId(), positionToSync);
         displayLocation();
     }
+
 
     private Position createPositionToSync(Location location) {
         Position position = new Position();
