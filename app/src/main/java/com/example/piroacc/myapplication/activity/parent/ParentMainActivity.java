@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
+import com.example.piroacc.myapplication.async.parent.ParentGetChildPositions;
 import com.example.piroacc.myapplication.async.parent.ParentGetChildrens;
 import com.example.piroacc.myapplication.model.Dziecko;
 import com.example.piroacc.myapplication.model.Pozycja;
@@ -18,8 +20,8 @@ import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
 import com.example.piroacc.myapplication.model.dto.request.UserDataResponse;
 import com.example.piroacc.myapplication.model.dto.response.KolejkaRodzicMDTOResponse;
 import com.example.piroacc.myapplication.async.parent.RodzicCheckRequests;
-import com.example.piroacc.myapplication.async.parent.RodzicGetChildPositions;
 import com.example.piroacc.myapplication.model.dto.response.parent.ParentChildMDTOResponse;
+import com.example.piroacc.myapplication.model.dto.response.parent.PositionForParentMDTOResponse;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -27,7 +29,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -61,8 +62,20 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
         initializeParentChildrens();
     }
 
-    private void showPositionForSelectedChildren() {
+    public void showPositionForSelectedChildren(View view) {
         ParentChildMDTOResponse selectedChildren = (ParentChildMDTOResponse) childrensSpinner.getSelectedItem();
+        try {
+            List<PositionForParentMDTOResponse> childrenPositions = new ParentGetChildPositions().
+                    execute(selectedChildren.getChildId()).get();
+            for (PositionForParentMDTOResponse temp : childrenPositions) {
+                LatLng point = new LatLng(temp.getLatitude(), temp.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(point).title("Marker"));
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     private void findUIElements() {
@@ -127,48 +140,6 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
                     e.printStackTrace();
                 }
                 break;
-            /**
-             * co tu bedzie?
-             * pobierz liste wszystkich dzieci - dodaj je do lokalnej bazy
-             * wybierz pierwszy element
-             * pobierz jego pozycje z serwera
-             * wyswietl je
-             */
-            case R.id.parentTest:
-                request = new RodzicMDTORequest(currentParent);
-            /*    for(Uzytkownik child : childs){
-                    DatabaseHelper.getInstance(this).addChildrenForParent(child);
-                }*/
-//                Uzytkownik selectedChild = childs.get(0);
-                try {
-                    List<Pozycja> childrenPositionsFromServer = new RodzicGetChildPositions().execute(1).get();
-//                    List<Pozycja> selectedChildrenPositions = DatabaseHelper.getInstance(this).getChildsPosition(String.valueOf(selectedChild.getId()));
-                    for (Pozycja temp : childrenPositionsFromServer) {
-                        LatLng point = new LatLng(temp.getSzerokoscGeograficzna(), temp.getDlugoscGeograficzna());
-                        mMap.addMarker(new MarkerOptions().position(point).title("Marker"));
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case R.id.parentSynchronizeTest:
-                request = new RodzicMDTORequest(currentParent);
-                try {
-                    List<KolejkaRodzicMDTOResponse> requests = new RodzicCheckRequests().execute(request).get();
-                    for (KolejkaRodzicMDTOResponse tmp : requests) {
-                        Dziecko dziecko = new Dziecko(tmp);
-                    }
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-                break;
-
 
         }
         return super.onOptionsItemSelected(item);
@@ -183,7 +154,7 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
 //        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         try {
-            List<Pozycja> positions = new RodzicGetChildPositions().execute(51).get();
+            List<Pozycja> positions = new ParentGetChildPositions().execute(51).get();
             Log.d("POZYCJE POBRANE : ", String.valueOf(positions.size()));
             for (Pozycja temp : positions) {
                 LatLng point = new LatLng(temp.getSzerokoscGeograficzna(), temp.getDlugoscGeograficzna());
