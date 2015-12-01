@@ -21,6 +21,8 @@ import android.widget.Toast;
 import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.async.parent.ParentGetChildPositions;
 import com.example.piroacc.myapplication.async.parent.ParentGetChildrens;
+import com.example.piroacc.myapplication.helper.DateParser;
+import com.example.piroacc.myapplication.model.Position;
 import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
@@ -32,6 +34,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,7 +48,7 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
 
     private static final String DEBUG_LOG = "RODZIC MAPS ";
 
-    private ArrayList<Pozycja> childsPozytions;
+    private List<Position> childsPozytions = new ArrayList<>();
 
     private Uzytkownik currentParent;
 
@@ -79,29 +83,29 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void showPositionForSelectedChildren(View view) {
-        Log.d("fromHour" , String.valueOf(fromHour));
-        Log.d("fromMinutes" , String.valueOf(fromMinutes));
-        Log.d("toHour" , String.valueOf(toHour));
-        Log.d("toMinutes" , String.valueOf(toMinutes));
-        Log.d("fromYear" , String.valueOf(fromYear));
-        Log.d("fromDay" , String.valueOf(fromDay));
-        Log.d("fromMonth" , String.valueOf(fromMonth));
-        Log.d("toYear" , String.valueOf(toYear));
-        Log.d("toDay" , String.valueOf(toDay));
-        Log.d("toMonth" , String.valueOf(toMonth));
-
-
+        Log.d("fromHour", String.valueOf(fromHour));
+        Log.d("fromMinutes", String.valueOf(fromMinutes));
+        Log.d("toHour", String.valueOf(toHour));
+        Log.d("toMinutes", String.valueOf(toMinutes));
+        Log.d("fromYear", String.valueOf(fromYear));
+        Log.d("fromDay", String.valueOf(fromDay));
+        Log.d("fromMonth", String.valueOf(fromMonth));
+        Log.d("toYear", String.valueOf(toYear));
+        Log.d("toDay", String.valueOf(toDay));
+        Log.d("toMonth", String.valueOf(toMonth));
         ParentChildMDTOResponse selectedChildren = (ParentChildMDTOResponse) childrensSpinner.getSelectedItem();
         try {
             fromMonth++;// TODO temp rozwiazanie, miesiace liczone od 0
             toMonth++;
-            String fromDate = fromYear+"-"+fromMonth+"-"+fromDay+" "+fromHour+":"+fromMinutes+":00";
-            String toDate = toYear+"-"+toMonth+"-"+toDay+" "+toHour+":"+toMinutes+":00";
+            String fromDate = fromYear + "-" + fromMonth + "-" + fromDay + " " + fromHour + ":" + fromMinutes + ":00";
+            String toDate = toYear + "-" + toMonth + "-" + toDay + " " + toHour + ":" + toMinutes + ":00";
             List<PositionForParentMDTOResponse> childrenPositions = new ParentGetChildPositions().
-                    execute(String.valueOf(selectedChildren.getChildId()),fromDate,toDate).get();
+                    execute(String.valueOf(selectedChildren.getChildId()), fromDate, toDate).get();
             for (PositionForParentMDTOResponse temp : childrenPositions) {
                 LatLng point = new LatLng(temp.getLatitude(), temp.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(point).title("Marker"));
+                String formattedDate = DateParser.parseDateForMapFormatDisplay(temp.getCreationDate());
+                mMap.addMarker(new MarkerOptions().position(point).title(formattedDate));
+                childsPozytions.add(new Position(temp));
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -158,17 +162,20 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
         RodzicMDTORequest request = null;
 
         switch (item.getItemId()) {
-            case R.id.parentChildrens:
-                Toast.makeText(getBaseContext(), "You selected moje dzieci", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.parentSynchronize:
-                Toast.makeText(getBaseContext(), "You selected snychronize", Toast.LENGTH_SHORT).show();
-                request = new RodzicMDTORequest(currentParent);
-                break;
-
+            case R.id.action_paint_polygon:
+                drawPolylineOnMap();
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void drawPolylineOnMap() {
+        PolylineOptions rectOptions = new PolylineOptions();
+        for (Position tempPos : childsPozytions) {
+            rectOptions.add(new LatLng(tempPos.getLatitude(), tempPos.getLongitude()));
+        }
+        Polyline polyline = mMap.addPolyline(rectOptions);
+    }
+
     public void showTimePickerFrom(View v) {
         DialogFragment newFragment = new TimePickerFrom();
         newFragment.show(getSupportFragmentManager(), "timePicker");
@@ -198,7 +205,7 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             fromHour = hourOfDay;
-            fromMinutes=minute;
+            fromMinutes = minute;
             // Do something with the time chosen by the user
         }
     }
@@ -222,14 +229,16 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             toHour = hourOfDay;
-            toMinutes=minute;
+            toMinutes = minute;
             // Do something with the time chosen by the user
         }
     }
+
     public void showDatePickerTo(View v) {
         DialogFragment newFragment = new DatePickerTo();
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
+
     public void showDatePickerFrom(View v) {
         DialogFragment newFragment = new DatePickerFrom();
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -251,9 +260,9 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            fromYear=year;
-            fromMonth=month;
-            fromDay=day;
+            fromYear = year;
+            fromMonth = month;
+            fromDay = day;
             // Do something with the date chosen by the user
         }
     }
@@ -274,9 +283,9 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            toYear=year;
-            toMonth=month;
-            toDay=day;
+            toYear = year;
+            toMonth = month;
+            toDay = day;
             // Do something with the date chosen by the user
         }
     }

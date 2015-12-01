@@ -12,6 +12,8 @@ import java.util.Date;
 public class DateParser {
 
     private static final String DATE_FROMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static final String DATE_FORMAT_MAP = "yyyy-MM-dd HH:mm:ss";
+
 
     public static String getCurrentParsedDateAsString() {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FROMAT);
@@ -32,14 +34,16 @@ public class DateParser {
         return date;
     }
 
-    public static Date parseStringToDate(String dateAsString){
-        DateFormat dateFormat = new SimpleDateFormat(DATE_FROMAT);
-        Date date = new Date();
+
+    public static String parseDateForMapFormatDisplay(String stringDate) {
+        SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            date = dateFormat.parse(dateAsString);
+            String reformattedStr = myFormat.format(fromUser.parse(stringDate));
+            return reformattedStr;
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return date;
+        return "parser fails";
     }
 }

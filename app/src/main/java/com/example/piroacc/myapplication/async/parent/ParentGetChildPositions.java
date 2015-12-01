@@ -59,8 +59,13 @@ public class ParentGetChildPositions extends AsyncTask<String, Void, List<Positi
     @Override
     protected List<PositionForParentMDTOResponse> doInBackground(String... params) {
         childId = params[0];
-        if(params.length ==1)
-        return getForPositions();
+        String whatRecievied = (String) params[1] + (String) params[2];
+        if ( whatRecievied.equals("0-1-0 0:0:000-1-0 0:0:00")){
+            return getForPositions();
+
+        }
+/*        if(params.length ==1)
+        return getForPositions();*/
         else{
             fromDate = params[1];
             toDate = params[2];

@@ -4,21 +4,7 @@
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
     <item
-        android:id="@+id/parentChildrens"
-        android:title="@string/menu_bar_parent_my_childrens"
+        android:id="@+id/action_paint_polygon"
+        android:title="@string/menu_bar_paint_polygon"
         />
-    <item
-        android:id="@+id/parentSynchronize"
-        android:title="@string/menu_bar_parent_synchronize"
-        />
-
-    <item
-        android:id="@+id/parentTest"
-        android:title="@string/menu_bar_parent_test"
-        />
-    <item
-        android:id="@+id/parentSynchronizeTest"
-        android:title="@string/menu_bar_parent_synchronize"
-        />
-
 </menu>

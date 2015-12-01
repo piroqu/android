@@ -24,6 +24,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ChildMainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
@@ -55,6 +56,8 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
     private EditText parentEmailEditText;
     private Button btnTurnOnLocalization;
     private Button btnAddParent;
+
+    List<Position> tempPositions;
 
     private String parentEmail;
 
