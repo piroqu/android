@@ -8,8 +8,20 @@
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_name">Name</string>
+    <string name="prompt_phone_number">Phone number</string>
+    <string name="prompt_role">Select your role</string>
+
+    <!-- Strings related to child activity -->
+    <string name="prompt_parent_email">Insert parent email address</string>
+    <string name="action_add_parent">Add parent</string>
+
+
+
+    <string name="action_sign_in">Confirm</string>
+    <string name="action_registration">Register account</string>
+    <string name="info_to_register_account">To register account provide email addres and press button "Sign or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -18,10 +30,11 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_login">Sign in or register account</string>
     <string name="title_activity_test_locator">TestLocator</string>
 
     <string name="menu_bar_paint_polygon">Paint line</string>
+    <string name="title_activity_new_register">Sign in</string>
 
 
 

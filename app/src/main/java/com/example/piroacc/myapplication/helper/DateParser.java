@@ -17,7 +17,6 @@ public class DateParser {
 
     public static String getCurrentParsedDateAsString() {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FROMAT);
-        Date date = new Date();
         Calendar cal = Calendar.getInstance();
         return (dateFormat.format(cal.getTime()));
     }

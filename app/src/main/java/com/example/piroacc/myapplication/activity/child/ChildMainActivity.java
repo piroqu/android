@@ -40,7 +40,7 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
     private GoogleApiClient mGoogleApiClient;
 
     // boolean flag to toggle periodic location updates
-    private boolean mRequestingLocationUpdates = false;
+    private boolean mRequestingLocationUpdates = true;
 
     private LocationRequest mLocationRequest;
 
@@ -51,14 +51,7 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
     private static int FATEST_INTERVAL = 2000; // 2 sec
     private static int DISPLACEMENT = 2; // 2 meters
 
-    private TextView txtLat;
-    private TextView txtLong;
     private EditText parentEmailEditText;
-    private Button btnTurnOnLocalization;
-    private Button btnAddParent;
-
-    List<Position> tempPositions;
-
     private String parentEmail;
 
     @Override
@@ -76,11 +69,7 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
     }
 
     private void findUIElements() {
-        txtLat = (TextView) findViewById(R.id.editLat);
-        txtLong = (TextView) findViewById(R.id.editLong);
-        btnTurnOnLocalization = (Button) findViewById(R.id.btnLocalization);
-        btnAddParent = (Button) findViewById(R.id.btnAddParent);
-        parentEmailEditText = (EditText) findViewById(R.id.editTextParentEmailAddress);
+        parentEmailEditText = (EditText) findViewById(R.id.parent_email);
     }
 
     @Override
@@ -107,7 +96,11 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
             if (response.getStatus().equals("ok")) {
                 Toast.makeText(getApplicationContext(), "You are connected with parent!",
                         Toast.LENGTH_SHORT).show();
-            } else {
+            } else if(response.getStatus().equals("relation exists")){
+                Toast.makeText(getApplicationContext(), "You are already connected with this parent.",
+                        Toast.LENGTH_SHORT).show();
+            }
+            else {
                 Toast.makeText(getApplicationContext(), "Something went wrong, try again.",
                         Toast.LENGTH_SHORT).show();
             }
@@ -118,38 +111,11 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
             e.printStackTrace();
         }
     }
-
-    public void refresh(View view) {
-        Log.d("REFRESH", "REFRESH PRESSED");
-        displayLocation();
-        startLocationUpdates();
-    }
-
-    /**
-     * Method to display the location on UI
-     */
-    private void displayLocation() {
-        mLastLocation = LocationServices.FusedLocationApi
-                .getLastLocation(mGoogleApiClient);
-
-        if (mLastLocation != null) {
-            double latitude = mLastLocation.getLatitude();
-            double longitude = mLastLocation.getLongitude();
-
-            Log.d("Localization:", "LAT: " + latitude);
-            Log.d("Localization:", "LONG: " + longitude);
-            txtLat.setText("" + latitude);
-            txtLong.setText("" + longitude);
-        } else {
-            txtLat.setText("FAILED");
-            txtLong.setText("FAILED");
-        }
-    }
-
     /**
      * Creating google api client object
      */
     protected synchronized void buildGoogleApiClient() {
+        Log.d("DEBUG IN METHOD : " , " buildGoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -178,35 +144,10 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
     }
 
     /**
-     * Method to toggle periodic location updates
-     */
-    private void togglePeriodicLocationUpdates() {
-        if (!mRequestingLocationUpdates) {
-            // Changing the button text
-
-            mRequestingLocationUpdates = true;
-
-            // Starting the location updates
-            startLocationUpdates();
-
-            Log.d(TAG, "Periodic location updates started!");
-
-        } else {
-            // Changing the button text
-
-            mRequestingLocationUpdates = false;
-
-            // Stopping the location updates
-            stopLocationUpdates();
-
-            Log.d(TAG, "Periodic location updates stopped!");
-        }
-    }
-
-    /**
      * Starting the location updates
      */
     protected void startLocationUpdates() {
+        Log.d("DEBUG IN METHOD : " , " startLocationUpdates");
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
 
@@ -240,7 +181,7 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
 
     @Override
     public void onConnected(Bundle bundle) {
-        displayLocation();
+        Log.d("DEBUG IN METHOD : " , " onConnected");
         if (mRequestingLocationUpdates) {
             startLocationUpdates();
         }
@@ -265,7 +206,6 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
                 Toast.LENGTH_SHORT).show();
         Position positionToSync = createPositionToSync(location);
         new SendPosition().execute(userDataResponse.getId(), positionToSync);
-        displayLocation();
     }
 
 

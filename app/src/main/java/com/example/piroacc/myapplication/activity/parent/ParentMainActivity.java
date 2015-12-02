@@ -3,18 +3,23 @@ package com.example.piroacc.myapplication.activity.parent;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -38,6 +43,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -55,6 +61,7 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
     private UserDataResponse userData;
 
     private List<ParentChildMDTOResponse> parentChildrens;
+
 
     private Spinner childrensSpinner;
 
@@ -119,9 +126,14 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     private void addChildrensToSpinner() {
-        ArrayAdapter<ParentChildMDTOResponse> adapter = new ArrayAdapter<ParentChildMDTOResponse>(this,
+        Spinner mySpinner = (Spinner) findViewById(R.id.spinnerChildrens);
+
+// Setting a Custom Adapter to the Spinner
+        mySpinner.setAdapter(new MyAdapter(ParentMainActivity.this, R.layout.custom,
+                parentChildrens.toArray()));
+        /*ArrayAdapter<ParentChildMDTOResponse> adapter = new ArrayAdapter<ParentChildMDTOResponse>(this,
                 android.R.layout.simple_spinner_item, parentChildrens);
-        childrensSpinner.setAdapter(adapter);
+        childrensSpinner.setAdapter(adapter);*/
     }
 
     private void initializeParentChildrens() {
@@ -290,27 +302,59 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
+    // Creating an Adapter Class
+    public class MyAdapter extends ArrayAdapter {
 
-/*    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        public ParentChildMDTOResponse langs[];
 
-        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(-34, 151);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        try {
-            List<Pozycja> positions = new ParentGetChildPositions().execute(51).get();
-            Log.d("POZYCJE POBRANE : ", String.valueOf(positions.size()));
-            for (Pozycja temp : positions) {
-                LatLng point = new LatLng(temp.getSzerokoscGeograficzna(), temp.getDlugoscGeograficzna());
-                mMap.addMarker(new MarkerOptions().position(point).title("Marker"));
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        public MyAdapter(Context context, int textViewResourceId,
+                         Object[] objects) {
+            super(context, textViewResourceId, objects);
+            langs = (ParentChildMDTOResponse[]) objects;
         }
 
-    }*/
+        public View getCustomView(int position, View convertView,
+                                  ViewGroup parent) {
+
+// Inflating the layout for the custom Spinner
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.custom, parent, false);
+
+// Declaring and Typecasting the textview in the inflated layout
+            TextView tvLanguage = (TextView) layout
+                    .findViewById(R.id.tvLanguage);
+
+// Setting the text using the array
+            tvLanguage.setText( langs[position].toString());
+
+// Setting the color of the text
+            tvLanguage.setTextColor(Color.rgb(75, 180, 225));
+
+
+// Setting Special atrributes for 1st element
+            if (position == 0) {
+// Setting the size of the text
+                tvLanguage.setTextSize(20f);
+// Setting the text Color
+                tvLanguage.setTextColor(Color.BLACK);
+
+            }
+
+            return layout;
+        }
+
+        // It gets a View that displays in the drop down popup the data at the specified position
+        @Override
+        public View getDropDownView(int position, View convertView,
+                                    ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+
+        // It gets a View that displays the data at the specified position
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+    }
+
 }
