@@ -10,12 +10,7 @@ public class ParentChildMDTOResponse implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "Child{" +
-                "childId=" + childId +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                '}';
+        return "Name : " + name + ", email : " + email;
     }
 
     public Integer getChildId() {
