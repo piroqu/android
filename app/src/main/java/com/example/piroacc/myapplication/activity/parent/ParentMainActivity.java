@@ -21,14 +21,12 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.example.piroacc.myapplication.R;
 import com.example.piroacc.myapplication.async.parent.ParentGetChildPositions;
 import com.example.piroacc.myapplication.async.parent.ParentGetChildrens;
 import com.example.piroacc.myapplication.helper.DateParser;
 import com.example.piroacc.myapplication.model.Position;
-import com.example.piroacc.myapplication.model.Pozycja;
 import com.example.piroacc.myapplication.model.Uzytkownik;
 import com.example.piroacc.myapplication.model.dto.request.RodzicMDTORequest;
 import com.example.piroacc.myapplication.model.dto.request.UserDataResponse;
@@ -64,6 +62,11 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
 
 
     private Spinner childrensSpinner;
+
+    public TextView txtViewTimeFrom;
+    public TextView textViewDateFrom;
+    public TextView textViewTimeTo;
+    public TextView textViewDateTo;
 
     public int fromHour;
     public int fromMinutes;
@@ -106,6 +109,8 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
             toMonth++;
             String fromDate = fromYear + "-" + fromMonth + "-" + fromDay + " " + fromHour + ":" + fromMinutes + ":00";
             String toDate = toYear + "-" + toMonth + "-" + toDay + " " + toHour + ":" + toMinutes + ":00";
+            fromMonth=0;
+            toMonth=0;
             List<PositionForParentMDTOResponse> childrenPositions = new ParentGetChildPositions().
                     execute(String.valueOf(selectedChildren.getChildId()), fromDate, toDate).get();
             for (PositionForParentMDTOResponse temp : childrenPositions) {
@@ -122,6 +127,11 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     private void findUIElements() {
+        txtViewTimeFrom =(TextView) findViewById(R.id.txtViewTime);
+        textViewDateFrom =(TextView) findViewById(R.id.txtViewFromDay);
+        textViewTimeTo =(TextView) findViewById(R.id.textViewTimeTo);
+        textViewDateTo =(TextView) findViewById(R.id.textViewDateTo);
+
         childrensSpinner = (Spinner) findViewById(R.id.spinnerChildrens);
     }
 
@@ -218,6 +228,8 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             fromHour = hourOfDay;
             fromMinutes = minute;
+            String preparedText = hourOfDay + ":" + minute;
+            txtViewTimeFrom.setText(preparedText);
             // Do something with the time chosen by the user
         }
     }
@@ -242,6 +254,8 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             toHour = hourOfDay;
             toMinutes = minute;
+            String preparedText = hourOfDay + ":" + minute;
+            textViewTimeTo.setText(preparedText);
             // Do something with the time chosen by the user
         }
     }
@@ -274,7 +288,10 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
         public void onDateSet(DatePicker view, int year, int month, int day) {
             fromYear = year;
             fromMonth = month;
+            month++;
             fromDay = day;
+            String preparedDate = day+"/"+month+ "/"+year;
+            textViewDateFrom.setText(preparedDate);
             // Do something with the date chosen by the user
         }
     }
@@ -297,7 +314,10 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
         public void onDateSet(DatePicker view, int year, int month, int day) {
             toYear = year;
             toMonth = month;
+            month++;
             toDay = day;
+            String preparedDate = day+"/"+month+ "/"+year;
+            textViewDateTo.setText(preparedDate);
             // Do something with the date chosen by the user
         }
     }

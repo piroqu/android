@@ -33,44 +33,84 @@
         android:layout_alignParentEnd="true"
         android:onClick="showPositionForSelectedChildren"/>
 
-    <Button
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pick time"
-        android:id="@+id/btnSelectTime"
-        android:onClick="showTimePickerFrom"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Select date and time range"
+        android:id="@+id/txtViewDateAndTimeRange"
         android:layout_below="@+id/spinnerChildrens"
-        android:layout_toLeftOf="@+id/btnPickDate"
-        android:layout_toStartOf="@+id/btnPickDate" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pick date"
-        android:id="@+id/btnPickDate"
-        android:onClick="showDatePickerFrom"
-        android:layout_below="@+id/spinnerChildrens"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <Button
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TO PICK"
-        android:id="@+id/btnToPickDate"
-        android:layout_above="@+id/btnShowPosition"
-        android:layout_alignLeft="@+id/btnSelectTime"
-        android:layout_alignStart="@+id/btnSelectTime"
-        android:onClick="showTimePickerTo"/>
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="From :"
+        android:id="@+id/txtViewFrom"
+        android:layout_below="@+id/txtViewDateAndTimeRange"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-    <Button
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TO DATe"
-        android:id="@+id/btnToPickDate"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="To :"
+        android:id="@+id/txtViewTo"
         android:layout_above="@+id/btnShowPosition"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="17dp" />
+
+    <TextView
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="time"
+        android:id="@+id/txtViewTime"
+        android:layout_alignTop="@+id/txtViewFrom"
+        android:layout_toRightOf="@+id/txtViewFrom"
+        android:onClick="showTimePickerFrom"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="day"
+        android:id="@+id/txtViewFromDay"
+        android:layout_alignTop="@+id/txtViewTime"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:onClick="showDatePickerTo"/>
+        android:layout_toRightOf="@+id/txtViewTime"
+        android:layout_toEndOf="@+id/txtViewTime"
+        android:onClick="showDatePickerFrom"/>
+
+    <TextView
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="time"
+        android:id="@+id/textViewTimeTo"
+        android:onClick="showTimePickerTo"
+        android:layout_alignTop="@+id/txtViewTo"
+        android:layout_toLeftOf="@+id/txtViewFromDay"
+        android:layout_toStartOf="@+id/txtViewFromDay" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="day"
+        android:id="@+id/textViewDateTo"
+        android:onClick="showDatePickerTo"
+        android:layout_alignBottom="@+id/textViewTimeTo"
+        android:layout_toRightOf="@+id/textViewTimeTo"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 
 </RelativeLayout>
