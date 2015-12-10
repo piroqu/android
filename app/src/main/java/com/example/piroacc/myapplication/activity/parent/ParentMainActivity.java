@@ -47,22 +47,11 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ParentMainActivity extends AppCompatActivity implements OnMapReadyCallback {
-
     private GoogleMap mMap;
-
-    private static final String DEBUG_LOG = "RODZIC MAPS ";
-
     private List<Position> childsPozytions = new ArrayList<>();
-
-    private Uzytkownik currentParent;
-
     private UserDataResponse userData;
-
     private List<ParentChildMDTOResponse> parentChildrens;
-
-
     private Spinner childrensSpinner;
-
     public TextView txtViewTimeFrom;
     public TextView textViewDateFrom;
     public TextView textViewTimeTo;
@@ -90,6 +79,47 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
         findUIElements();
         getUserData();
         initializeParentChildrens();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        RodzicMDTORequest request = null;
+
+        switch (item.getItemId()) {
+            case R.id.action_paint_polygon:
+                drawPolylineOnMap();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void drawPolylineOnMap() {
+        PolylineOptions rectOptions = new PolylineOptions();
+        for (Position tempPos : childsPozytions) {
+            rectOptions.add(new LatLng(tempPos.getLatitude(), tempPos.getLongitude()));
+        }
+        Polyline polyline = mMap.addPolyline(rectOptions);
+    }
+
+    public void showTimePickerFrom(View v) {
+        DialogFragment newFragment = new TimePickerFrom();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    public void showTimePickerTo(View v) {
+        DialogFragment newFragment = new TimePickerTo();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 
     public void showPositionForSelectedChildren(View view) {
@@ -160,52 +190,6 @@ public class ParentMainActivity extends AppCompatActivity implements OnMapReadyC
     private void getUserData() {
         Intent i = getIntent();
         userData = (UserDataResponse) i.getParcelableExtra("user data");
-    }
-
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-/*        for (Pozycja temp : childsPozytions) {
-            LatLng point = new LatLng(temp.getSzerokoscGeograficzna(), temp.getDlugoscGeograficzna());
-            mMap.addMarker(new MarkerOptions().position(point).title("Marker"));
-        }*/
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        RodzicMDTORequest request = null;
-
-        switch (item.getItemId()) {
-            case R.id.action_paint_polygon:
-                drawPolylineOnMap();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void drawPolylineOnMap() {
-        PolylineOptions rectOptions = new PolylineOptions();
-        for (Position tempPos : childsPozytions) {
-            rectOptions.add(new LatLng(tempPos.getLatitude(), tempPos.getLongitude()));
-        }
-        Polyline polyline = mMap.addPolyline(rectOptions);
-    }
-
-    public void showTimePickerFrom(View v) {
-        DialogFragment newFragment = new TimePickerFrom();
-        newFragment.show(getSupportFragmentManager(), "timePicker");
-    }
-
-    public void showTimePickerTo(View v) {
-        DialogFragment newFragment = new TimePickerTo();
-        newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 
     public class TimePickerFrom extends DialogFragment

@@ -68,10 +68,6 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
         }
     }
 
-    private void findUIElements() {
-        parentEmailEditText = (EditText) findViewById(R.id.parent_email);
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -89,33 +85,11 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
         }
     }
 
-    public void sendConnectionWithParent(View view) {
-        parentEmail = parentEmailEditText.getText().toString();
-        try {
-            ConnectionMDTOResponse response = new SendConnectionRequest().execute(userDataResponse.getId(), parentEmail).get();
-            if (response.getStatus().equals("ok")) {
-                Toast.makeText(getApplicationContext(), "You are connected with parent!",
-                        Toast.LENGTH_SHORT).show();
-            } else if(response.getStatus().equals("relation exists")){
-                Toast.makeText(getApplicationContext(), "You are already connected with this parent.",
-                        Toast.LENGTH_SHORT).show();
-            }
-            else {
-                Toast.makeText(getApplicationContext(), "Something went wrong, try again.",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
     /**
      * Creating google api client object
      */
     protected synchronized void buildGoogleApiClient() {
-        Log.d("DEBUG IN METHOD : " , " buildGoogleApiClient");
+        Log.d("DEBUG IN METHOD : ", " buildGoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -147,7 +121,7 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
      * Starting the location updates
      */
     protected void startLocationUpdates() {
-        Log.d("DEBUG IN METHOD : " , " startLocationUpdates");
+        Log.d("DEBUG IN METHOD : ", " startLocationUpdates");
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
 
@@ -181,7 +155,7 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d("DEBUG IN METHOD : " , " onConnected");
+        Log.d("DEBUG IN METHOD : ", " onConnected");
         if (mRequestingLocationUpdates) {
             startLocationUpdates();
         }
@@ -203,11 +177,13 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
         mLastLocation = location;   //adds new location
         Log.d("LOCATION", " CHANGED ");
         Toast.makeText(getApplicationContext(), "Location changed!",
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT).show();     // developer function
         Position positionToSync = createPositionToSync(location);
         new SendPosition().execute(userDataResponse.getId(), positionToSync);
     }
-
+    private void findUIElements() {
+        parentEmailEditText = (EditText) findViewById(R.id.parent_email);
+    }
 
     private Position createPositionToSync(Location location) {
         Position position = new Position();
@@ -215,5 +191,27 @@ public class ChildMainActivity extends AppCompatActivity implements GoogleApiCli
         position.setLatitude(location.getLatitude());
         position.setLongitude(location.getLongitude());
         return position;
+    }
+
+    public void sendConnectionWithParent(View view) {
+        parentEmail = parentEmailEditText.getText().toString();
+        try {
+            ConnectionMDTOResponse response = new SendConnectionRequest().execute(userDataResponse.getId(), parentEmail).get();
+            if (response.getStatus().equals("ok")) {
+                Toast.makeText(getApplicationContext(), "You are connected with parent!",
+                        Toast.LENGTH_SHORT).show();
+            } else if (response.getStatus().equals("relation exists")) {
+                Toast.makeText(getApplicationContext(), "You are already connected with this parent.",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Something went wrong, try again.",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 }

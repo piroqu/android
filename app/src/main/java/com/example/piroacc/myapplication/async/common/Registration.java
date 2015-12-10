@@ -13,18 +13,14 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
-
-/**
- * Created by PiroACC on 2015-12-01.
- */
 public class Registration extends AsyncTask<String, Void, UserDataResponse> {
-    //TODO dodac do tej klasy zwracanie pelnych danych z JBossa
+    private static final String USER_REGISTRATION_PATH = "praca/rest/common/register/";
+    private static final String LOG_GET_POSITIONS = "USER REGISTRATION ";
     private String userEmail;
     private String userPassword;
     private String name;
     private String phoneNumber;
     private String role;
-
     @Override
     protected UserDataResponse doInBackground(String... params) {
         userEmail = params[0];
@@ -32,13 +28,8 @@ public class Registration extends AsyncTask<String, Void, UserDataResponse> {
         name = params[2];
         phoneNumber = params[3];
         role = params[4];
-
         return postRegister();
     }
-
-    private static final String USER_REGISTRATION_PATH = "praca/rest/common/register/";
-
-    private static final String LOG_GET_POSITIONS = "USER REGISTRATION ";
 
     public UserDataResponse postRegister() {
         String url = Constant.HOST_ADDRES + USER_REGISTRATION_PATH + userEmail

@@ -24,7 +24,11 @@
         android:label="@string/app_name"
         android:screenOrientation="portrait"
         android:supportsRtl="true"
+<<<<<<< HEAD
+        android:theme="@style/AppTheme" >
+=======
         android:theme="@style/AppTheme">
+>>>>>>> master
         <activity
             android:name=".activity.common.LoginActivity"
             android:label="@string/title_activity_login"
@@ -55,12 +59,22 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.child.ChildMainActivity"
+<<<<<<< HEAD
+            android:label="@string/title_activity_child" />
+        <activity
+            android:name=".activity.common.RegistrationActivity"
+            android:label="@string/title_activity_common_registration_page" >
+        </activity>
+        <activity android:name=".TestActivity" >
+        </activity>
+=======
             android:label="@string/title_activity_child"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.common.RegistrationActivity"
             android:label="@string/title_activity_common_registration_page"
             android:screenOrientation="portrait"></activity>
+>>>>>>> master
     </application>
 
 </manifest>
